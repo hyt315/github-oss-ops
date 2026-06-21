@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+__pycache__/
+*.pyc
+.obsidian/workspace.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp files
+*.tmp
+*.log
+~$*

@@ -1,0 +1,17 @@
+name: 文档改进
+description: 报告文档问题或建议改进
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: issue
+    attributes:
+      label: 问题描述
+      description: 哪部分文档有问题？错误、缺失还是不清楚？
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 改进建议
+      description: 你建议怎么改
