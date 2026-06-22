@@ -1,6 +1,6 @@
 ---
 name: github-oss-ops
-version: 1.0.0
+version: 1.0.1
 description: Use when managing open source GitHub repositories — covers Issue triage, smart replies, PR review assistance, version/release management, stale management, and operations reporting. Triggers: Issue 管理、分流、triage、看看有没有新 Issue、PR 审查、回复 Issue、版本号、发版、Release、changelog、过期 Issue、stale、运营报告、开源项目运营、oss ops、project operations.
 ---
 

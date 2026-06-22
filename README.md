@@ -7,7 +7,7 @@
 **AI-powered operations for open-source repos: smart Issue triage, PR review assistance, release management, and ops reporting**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.0.1-green.svg)]()
 [![SKILL.md](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green)](SKILL.md)
 
 [English](#english) | [中文](#中文)
@@ -16,7 +16,7 @@
 
 ---
 
-<a name="中文"></a>
+## 中文
 
 ## 📖 这是什么？
 
@@ -128,7 +128,7 @@ github-oss-ops/
 
 ---
 
-<a name="english"></a>
+## English
 
 ## 📖 What is this?
 
