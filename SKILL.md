@@ -1,6 +1,6 @@
 ---
 name: github-oss-ops
-version: 1.0.1
+version: 1.0.2
 description: Use when managing open source GitHub repositories — covers Issue triage, smart replies, PR review assistance, version/release management, stale management, and operations reporting. Triggers: Issue 管理、分流、triage、看看有没有新 Issue、PR 审查、回复 Issue、版本号、发版、Release、changelog、过期 Issue、stale、运营报告、开源项目运营、oss ops、project operations.
 ---
 
@@ -25,7 +25,7 @@ description: Use when managing open source GitHub repositories — covers Issue 
    - Fine-grained PAT（`github_pat_` 前缀）：可限定仓库和权限，更安全
    - Classic PAT（`ghp_` 前缀）：需 `repo` 权限，配置最简单
 2. **GitHub MCP 工具**（推荐）：官方 `github/github-mcp-server`，通过 Docker 运行
-   - 可用工具：`list_issues`、`get_issue`、`update_issue`、`add_issue_comment` 等
+   - 可用工具：`list_issues`、`issue_read`、`issue_write`、`add_issue_comment` 等
 3. **GitHub CLI（`gh`）**：安装 `gh` 并执行 `gh auth login`，适合交互式操作
 4. **curl + REST API**：以上均不可用时的回退方案
 
@@ -171,7 +171,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 - 建议操作：标记标签 + 回复 / 关闭 / 转 Discussion
 ```
 
-**用户确认后**，调用 `update_issue` 添加标签，或调用 `add_issue_comment` 添加回复。
+**用户确认后**，调用 `issue_write` 添加标签，或调用 `add_issue_comment` 添加回复。
 
 > 详细的标签体系、分流决策树和边界情况处理见 `references/triage-workflow.md`。
 
@@ -218,8 +218,8 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 对每个待审查的 PR：
 
 1. 读取 PR 描述和关联的 Issue
-2. 通过 `get_pull_request_files` 获取改动文件列表
-3. 检查 CI/CD 状态（通过 `get_pull_request_status` 或 API 获取检查结果）
+2. 通过 `pull_request_read`（method: `get_files`）获取改动文件列表
+3. 检查 CI/CD 状态（通过 `pull_request_read`（method: `get_status`）或 API 获取检查结果）
 4. 检查可合并状态（`mergeable` / `mergeable_state`）
 5. 分析改动类型（bug fix / feature / docs / refactor）
 6. 检查常见质量问题（硬编码、缺少测试、破坏性变更）
@@ -252,7 +252,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 - 批准并合并 / 需要修改 / 拒绝（说明原因）
 ```
 
-**用户确认后**，调用 `create_pull_request_review` 提交审查，或 `merge_pull_request` 合并。
+**用户确认后**，调用 `pull_request_review_write` 提交审查，或 `merge_pull_request` 合并。
 
 > PR 审查的详细检查清单和常见问题见 `references/pr-review-guide.md`。
 
@@ -366,7 +366,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 **所有操作都先展示给用户确认，不自动关闭任何 Issue。**
 
-### 6.3 关闭时的规范
+### 7.3 关闭时的规范
 
 关闭 Issue 时，评论中说明关闭原因，并附上：
 - 如问题已解决：引用修复的 commit 或 PR

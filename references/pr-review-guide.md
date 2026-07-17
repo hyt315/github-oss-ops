@@ -21,7 +21,7 @@
 ```
 读取 PR 元信息（标题、描述、关联 Issue）
     ↓
-获取改动文件列表（get_pull_request_files）
+获取改动文件列表（pull_request_read, method: get_files）
     ↓
 检查 CI/CD 状态和可合并状态
     ↓
@@ -48,7 +48,7 @@
 | 是否包含测试 | 检查是否有 `test/` 或 `*.test.*` 文件的改动 |
 | 是否更新了文档 | 检查是否有 `README`、`docs/`、`*.md` 的改动 |
 | 贡献者身份 | 首次贡献者 / 活跃贡献者（通过 commit 历史判断） |
-| CI/CD 检查状态 | 通过 `get_pull_request_status` 获取检查状态（pending/success/failure） |
+| CI/CD 检查状态 | 通过 `pull_request_read`（method: `get_status`）获取检查状态（pending/success/failure） |
 | 可合并状态 | 检查 `mergeable` 和 `mergeable_state` 字段（clean/blocked/dirty/unknown） |
 | 分支冲突 | 检查是否与目标分支有冲突（`mergeable_state` 为 `dirty` 时有冲突） |
 | CODEOWNERS 审查 | 检查是否已获得 CODEOWNERS 中定义的必要审查 |

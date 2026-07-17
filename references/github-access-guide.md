@@ -378,16 +378,17 @@ for key in ('mcpServers', 'servers', 'mcp'):
 
 ## MCP 工具清单
 
-本技能使用的 GitHub MCP 工具：
+本技能使用的 GitHub MCP 工具（基于官方 `github/github-mcp-server` 现行工具名）：
+
+> 官方 server 已把多个读取类工具整合为「通用工具 + `method` 参数」：`issue_read` 取代旧的 `get_issue`；`pull_request_read` 取代 `get_pull_request` / `get_pull_request_files` / `get_pull_request_status` 等；`issue_write` 取代 `create_issue` / `update_issue`；`pull_request_review_write` 取代 `create_pull_request_review`。若你的 MCP 客户端只暴露实际工具列表，以其为准。
 
 ### Issue 操作
 
 | 工具 | 功能 | 底层 API |
 |------|------|----------|
 | `list_issues` | 列出仓库的 Issue（支持过滤状态、标签） | `GET /repos/{owner}/{repo}/issues` |
-| `get_issue` | 获取单个 Issue 详情 | `GET /repos/{owner}/{repo}/issues/{number}` |
-| `create_issue` | 创建新 Issue | `POST /repos/{owner}/{repo}/issues` |
-| `update_issue` | 更新 Issue（标签、状态、指派人） | `PATCH /repos/{owner}/{repo}/issues/{number}` |
+| `issue_read`（method: `get`） | 获取单个 Issue 详情 | `GET /repos/{owner}/{repo}/issues/{number}` |
+| `issue_write` | 创建或更新 Issue（标签、状态、指派人） | `POST` / `PATCH /repos/{owner}/{repo}/issues` |
 | `add_issue_comment` | 添加 Issue 评论 | `POST /repos/{owner}/{repo}/issues/{number}/comments` |
 | `search_issues` | 搜索 Issue | `GET /search/issues` |
 
@@ -396,12 +397,12 @@ for key in ('mcpServers', 'servers', 'mcp'):
 | 工具 | 功能 | 底层 API |
 |------|------|----------|
 | `list_pull_requests` | 列出 PR | `GET /repos/{owner}/{repo}/pulls` |
-| `get_pull_request` | 获取 PR 详情 | `GET /repos/{owner}/{repo}/pulls/{number}` |
-| `get_pull_request_files` | 获取 PR 改动文件 | `GET /repos/{owner}/{repo}/pulls/{number}/files` |
-| `get_pull_request_status` | 获取 PR 检查状态 | `GET /repos/{owner}/{repo}/pulls/{number}` |
-| `get_pull_request_comments` | 获取 PR 评论 | `GET /repos/{owner}/{repo}/pulls/{number}/comments` |
-| `get_pull_request_reviews` | 获取 PR 审查 | `GET /repos/{owner}/{repo}/pulls/{number}/reviews` |
-| `create_pull_request_review` | 提交 PR 审查意见 | `POST /repos/{owner}/{repo}/pulls/{number}/reviews` |
+| `pull_request_read`（method: `get`） | 获取 PR 详情 | `GET /repos/{owner}/{repo}/pulls/{number}` |
+| `pull_request_read`（method: `get_files`） | 获取 PR 改动文件 | `GET /repos/{owner}/{repo}/pulls/{number}/files` |
+| `pull_request_read`（method: `get_status`） | 获取 PR 检查状态 | `GET /repos/{owner}/{repo}/commits/{sha}/status` |
+| `pull_request_read`（method: `get_comments`） | 获取 PR 评论 | `GET /repos/{owner}/{repo}/pulls/{number}/comments` |
+| `pull_request_read`（method: `get_reviews`） | 获取 PR 审查 | `GET /repos/{owner}/{repo}/pulls/{number}/reviews` |
+| `pull_request_review_write` | 提交 PR 审查意见 | `POST /repos/{owner}/{repo}/pulls/{number}/reviews` |
 | `merge_pull_request` | 合并 PR | `PUT /repos/{owner}/{repo}/pulls/{number}/merge` |
 
 ### 其他
