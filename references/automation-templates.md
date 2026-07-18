@@ -38,7 +38,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v10
+      - uses: actions/stale@1e223db275d687790206a7acac4d1a11bd6fe629 # v10
         with:
           # Issue 配置
           days-before-issue-stale: 30       # 30 天无活动标记 stale
@@ -126,7 +126,7 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: github/issue-labeler@v3.4
+      - uses: github/issue-labeler@c1b0f9f52a63158c4adc09425e858e87b32e9685 # v3.4
         with:
           configuration-path: .github/labeler.yml
           enable-versioned-regex: 0
@@ -160,7 +160,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/first-interaction@v3
+      - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3
         with:
           issue_message: |
             ## Welcome! 👋
@@ -169,7 +169,7 @@ jobs:
 
             A few tips:
             - Please make sure you've searched existing issues to avoid duplicates
-            - Check [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
+            - Check [CONTRIBUTING.md](https://github.com/${{ github.repository }}/blob/${{ github.event.repository.default_branch }}/CONTRIBUTING.md) for guidelines
             - Be patient — maintainers will review your issue as soon as possible
 
             We appreciate your contribution!
@@ -224,7 +224,7 @@ jobs:
   assign:
     runs-on: ubuntu-latest
     steps:
-      - uses: pozil/auto-assign-issue@v4
+      - uses: pozil/auto-assign-issue@af6beea6bdf1e8eb373f061c5bc168681fc6d011 # v4.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: your-github-username   # 替换为你的 GitHub 用户名
@@ -236,7 +236,7 @@ jobs:
 如果有多个维护者，可以用轮询（round-robin）方式分配：
 
 ```yaml
-      - uses: pozil/auto-assign-issue@v4
+      - uses: pozil/auto-assign-issue@af6beea6bdf1e8eb373f061c5bc168681fc6d011 # v4.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: user1, user2, user3
@@ -269,7 +269,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check issue health
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const { data: issues } = await github.rest.issues.listForRepo({

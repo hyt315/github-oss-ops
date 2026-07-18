@@ -1,0 +1,10 @@
+interface:
+  display_name: GitHub OSS Ops
+  short_description: Operate open-source GitHub repositories with approval-gated workflows
+  default_prompt: Use $github-oss-ops to scan this repository, draft a prioritized maintenance plan, and request approval before any external write.
+policy:
+  products:
+    - chatgpt
+    - codex
+    - api
+  allow_implicit_invocation: true

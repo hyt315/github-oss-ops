@@ -1,24 +1,23 @@
-# 安全策略 / Security Policy
+# Security Policy
 
-## 报告漏洞 / Reporting a Vulnerability
+## Reporting a vulnerability
 
-如果你发现安全漏洞，请通过以下方式报告：
+Report vulnerabilities through [GitHub Private Vulnerability Reporting](https://github.com/hyt315/github-oss-ops/security/advisories/new).
 
-If you discover a security vulnerability, please report it via:
+Do not open a public Issue containing exploit details, credentials, private repository data or personal information. If Private Vulnerability Reporting is unavailable, open a public Issue that only asks the maintainer to enable a private channel; do not include sensitive details.
 
-- **GitHub Issues**: [提交安全报告](https://github.com/hyt315/github-oss-ops/issues/new?template=bug_report.yml)（请勿公开敏感细节）
-- **Private vulnerability reporting**: 本仓库已启用 GitHub 私密漏洞报告功能
+## Credential safety
 
-我们将尽快确认并修复。
+GitHub OSS Ops must never:
 
-We will acknowledge and address the report as quickly as possible.
+- ask a user to paste a PAT, API key or password into chat;
+- search a home directory, editor configuration, MCP configuration or shell history for credentials;
+- print, log, commit or persist credentials in the skill directory;
+- place credentials in a Git remote URL;
+- request broader GitHub permissions than the approved operation requires.
 
-## 支持版本 / Supported Versions
+If a credential appears in chat, logs or a commit, stop the affected write operation, advise immediate revocation/rotation and verify the repository history before release.
 
-| 版本 / Version | 支持状态 / Supported |
-|---------------|:-------------------:|
-| latest        | ✅ |
+## Supported versions
 
-## 免责声明 / Disclaimer
-
-本 Skill 仅处理公开数据，不会收集或存储用户凭据。
+Only the latest published release is actively supported.

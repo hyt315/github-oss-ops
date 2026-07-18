@@ -1,0 +1,26 @@
+repository: hyt315/github-oss-ops
+description: Approval-gated Agent Skill for GitHub Issue triage, PR review assistance, releases and repository health reporting.
+topics:
+  - agent-skills
+  - github
+  - github-actions
+  - issue-triage
+  - maintainer-tools
+  - open-source
+  - pull-request-review
+  - release-automation
+  - repository-management
+  - workflow-automation
+features:
+  issues: true
+  discussions: true
+  private-vulnerability-reporting: true
+ruleset:
+  target: main
+  require-pull-request: true
+  require-status-check: validate
+  block-force-push: true
+  block-deletion: true
+release:
+  tag: v1.1.0
+  title: GitHub OSS Ops v1.1.0

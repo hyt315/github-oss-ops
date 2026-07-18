@@ -126,7 +126,7 @@ for label in '{"name":"type:bug","color":"d73a4a","description":"Confirmed bug"}
              '{"name":"resolution:invalid","color":"cfd3d7","description":"Invalid issue"}' \
              '{"name":"good first issue","color":"7057ff","description":"Good for newcomers"}' \
              '{"name":"help wanted","color":"008672","description":"Contributions welcome"}'; do
-  curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
+  curl --fail-with-body -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github+json" \
     "https://api.github.com/repos/<owner>/<repo>/labels" \
     -d "$label"
