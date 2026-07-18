@@ -214,7 +214,7 @@ GET /repos/{owner}/{repo}/pulls?state=closed&sort=updated&direction=desc
 
 ```bash
 curl -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   https://api.github.com/repos/{owner}/{repo}/releases \
   -d '{
@@ -229,7 +229,7 @@ curl -X POST \
 
 ### 方式二：通过 MCP 工具
 
-目前 GitHub MCP Server 没有直接的 `create_release` 工具。使用 curl 回退方案或通过 `create_or_update_file` 先推送版本文件变更，再用 `gh` CLI 创建 Release：
+先检查当前 GitHub 连接或 MCP 是否暴露 Release/Tag 写入能力。工具能力会更新，不要把某个工具名或缺失状态写死；没有相应能力时，使用已认证的 `gh` CLI 或 REST API：
 
 ```bash
 gh release create v1.3.0 --title "v1.3.0" --notes "### Added..." --target main

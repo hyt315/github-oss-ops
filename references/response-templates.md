@@ -136,7 +136,7 @@ Feel free to open another issue if you have other ideas.
 
 如果需要更多帮助，建议：
 - 查阅文档：{文档链接}
-- 在 [Discussions](../../discussions) 中提问（问答类讨论更方便检索）
+- 在 Discussions 中提问：{repo_url}/discussions（问答类讨论更方便检索）
 ```
 
 **英文**：
@@ -147,7 +147,7 @@ Here's how to solve this:
 
 If you need more help:
 - Check the docs: {docs link}
-- Ask in [Discussions](../../discussions) (Q&A discussions are easier to search)
+- Ask in Discussions: {repo_url}/discussions (Q&A discussions are easier to search)
 ```
 
 ### 信息不足
@@ -254,7 +254,7 @@ Please do not discuss this vulnerability publicly until a fix is released.
 
 几个小提示：
 - 提交 Issue 时可以使用模板，这样信息更完整
-- 如果想贡献代码，可以先看看 [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md)
+- 如果想贡献代码，可以先看看：{repo_url}/blob/{default_branch}/CONTRIBUTING.md
 - 有任何问题随时在这里问
 
 期待你的参与！
@@ -266,7 +266,7 @@ Thanks for your first contribution! Welcome to the project.
 
 A few tips:
 - Using issue templates helps provide complete information
-- If you'd like to contribute code, check out [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md) first
+- If you'd like to contribute code, check: {repo_url}/blob/{default_branch}/CONTRIBUTING.md first
 - Feel free to ask any questions here
 
 Looking forward to your contributions!

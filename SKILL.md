@@ -1,7 +1,7 @@
 ---
 name: github-oss-ops
-version: 1.0.2
-description: Use when managing open source GitHub repositories — covers Issue triage, smart replies, PR review assistance, version/release management, stale management, and operations reporting. Triggers: Issue 管理、分流、triage、看看有没有新 Issue、PR 审查、回复 Issue、版本号、发版、Release、changelog、过期 Issue、stale、运营报告、开源项目运营、oss ops、project operations.
+version: 1.1.0
+description: Use when maintaining an open-source GitHub repository after launch, including Issue triage, reply drafting, PR review assistance, CI diagnosis, release preparation, stale-item review, repository health reporting, and approval-gated GitHub writes. Triggers include Issue 管理、分流、triage、PR 审查、回复 Issue、版本号、发版、Release、changelog、过期 Issue、stale、运营报告、开源项目运营、oss ops, and project operations.
 ---
 
 # GitHub 开源项目运营
@@ -10,30 +10,30 @@ description: Use when managing open source GitHub repositories — covers Issue 
 
 ## 核心理念
 
-- **只起草，不发送**：所有回复和标签操作都先展示给用户确认，明确同意才执行
+- **读写分离**：公开信息读取、分析和草稿可直接进行；评论、标签、关闭、合并、推送、设置和发布等外部写操作必须明确目标与内容，并在执行前获得批准
 - **维护者视角**：帮助个人维护者或小型团队高效管理项目，降低维护负担
 - **渐进式运营**：不需要一次配置全部，按需使用各功能模块
 - **与 github-oss-prep 配合**：oss-prep 负责发布，本技能负责发布后的日常运营
+- **凭据零采集**：不要求用户把 Token 发到聊天，不搜索用户目录或配置文件提取凭据，不打印、记录或写入凭据
+- **能力发现优先**：根据当前平台实际提供的 GitHub 连接、MCP、CLI 或 API 能力选择路径，不假定某个工具名永久存在
 
 ---
 
 ## 前置条件
 
-需要 GitHub 访问凭据（三选一）：
+公开仓库的只读扫描不要求认证。只有读取私有数据或执行写操作时才需要 GitHub 授权。
 
-1. **GitHub PAT**（推荐 Fine-grained PAT，Classic PAT 亦可）
-   - Fine-grained PAT（`github_pat_` 前缀）：可限定仓库和权限，更安全
-   - Classic PAT（`ghp_` 前缀）：需 `repo` 权限，配置最简单
-2. **GitHub MCP 工具**（推荐）：官方 `github/github-mcp-server`，通过 Docker 运行
-   - 可用工具：`list_issues`、`issue_read`、`issue_write`、`add_issue_comment` 等
-3. **GitHub CLI（`gh`）**：安装 `gh` 并执行 `gh auth login`，适合交互式操作
-4. **curl + REST API**：以上均不可用时的回退方案
+按以下优先级使用当前环境已经提供的能力：
 
-配置方式（PAT）：
-- 环境变量：设置 `GITHUB_TOKEN` 或 `GITHUB_PERSONAL_ACCESS_TOKEN`
-- MCP Server 配置文件：将 PAT 填入对应工具的 `env` 中
+1. **平台官方 GitHub 连接器或 GitHub 官方远程 MCP（OAuth）**：由受信任界面完成授权。
+2. **已认证的 GitHub CLI**：先运行 `gh auth status`；未登录时让用户在受信任终端完成 `gh auth login --web`。
+3. **GitHub 官方本地 MCP Server**：适合需要本地宿主或受控 toolsets 的环境。
+4. **Fine-grained PAT**：仅在用户明确选择时使用，限定仓库、最小权限并设置有效期，由受信任的密码输入或环境管理接收。
+5. **公开 REST API / 网页**：作为只读或人工交接回退。
 
-详细的 PAT 生成步骤（含 Fine-grained PAT）、各工具 MCP 配置模板、GitHub CLI 用法、MCP 工具清单和 curl + REST API 回退方案，参见 [references/github-access-guide.md](references/github-access-guide.md)。
+不得从用户主目录、编辑器配置、MCP JSON、Shell 历史或进程环境中主动寻找 Token；不得输出 Token 值。不得把 Classic PAT 描述为默认或最简单的推荐方案。
+
+授权方式、最小权限、能力探测和回退流程见 [references/github-access-guide.md](references/github-access-guide.md)。
 
 ---
 
@@ -71,7 +71,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 2. 如果是，提取 `owner/repo` 信息
 3. 如果不是，询问用户要管理哪个仓库
 
-确认仓库后，检查仓库是否为公开仓库（本技能面向开源项目）。
+确认仓库后，记录 `owner/repo`、默认分支、可见性和当前用户权限。若是公开仓库，先完成无需认证的只读工作；若是私有仓库，说明本技能仍可使用，但它不属于公开开源运营场景，且必须通过受信任连接获得授权。
 
 ---
 
@@ -500,8 +500,8 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 | 没有未关闭的 Issue | 输出"一切正常"，不生成多余报告 |
 | Issue 数量超过 100 | 分批处理，优先处理最近的 |
 | API 速率限制 | 等待或提示用户稍后重试（已认证 5000 次/小时，未认证 60 次/小时） |
-| MCP 工具不可用 | 回退到 GitHub CLI（`gh`）或 curl + REST API |
-| Docker 未运行 | MCP Server 无法启动，提示用户启动 Docker 或使用 `gh` CLI / curl 回退方案 |
+| MCP 工具不可用 | 继续完成公开只读分析；写操作回退到已认证的 `gh`、受信任连接或人工交接 |
+| Docker 未运行 | 优先使用官方远程 MCP/OAuth、`gh` 或网页，不把 Docker 作为阻塞条件 |
 | Windows PowerShell 环境 | curl 示例中 `$GITHUB_TOKEN` 需改为 `$env:GITHUB_TOKEN`，行续接符 `\` 改为 `` ` `` |
 | Fine-grained PAT 权限不足 | 提示用户检查 PAT 的仓库范围和权限级别（Issues/PR 需 Read and write） |
 | 用户取消操作 | 不执行任何已准备好的操作 |
