@@ -1,6 +1,6 @@
 ---
 name: github-oss-ops
-version: 1.1.0
+version: 1.2.0
 description: Use when maintaining an open-source GitHub repository after launch, including Issue triage, reply drafting, PR review assistance, CI diagnosis, release preparation, stale-item review, repository health reporting, and approval-gated GitHub writes. Triggers include Issue 管理、分流、triage、PR 审查、回复 Issue、版本号、发版、Release、changelog、过期 Issue、stale、运营报告、开源项目运营、oss ops, and project operations.
 ---
 
@@ -34,6 +34,8 @@ description: Use when maintaining an open-source GitHub repository after launch,
 不得从用户主目录、编辑器配置、MCP JSON、Shell 历史或进程环境中主动寻找 Token；不得输出 Token 值。不得把 Classic PAT 描述为默认或最简单的推荐方案。
 
 授权方式、最小权限、能力探测和回退流程见 [references/github-access-guide.md](references/github-access-guide.md)。
+
+> **改动本技能自身后**：运行 `node scripts/validate-skill.mjs` 做结构校验，`python scripts/selftest.py` 做回归测试（好夹具绿 + 负向样本被抓），两者通过再提交。
 
 ---
 
@@ -91,19 +93,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 2.2 输出状态摘要
 
-```
-## 仓库状态概览 — {owner}/{repo}
-
-### 数据总览
-- 未关闭 Issue：N 个（其中 N 个待分流）
-- 未关闭 PR：N 个（其中 N 个待审查）
-- 最近 7 天新增：N 个 Issue，N 个 PR
-
-### 需要关注
-- [ ] N 个 Issue 没有任何标签（待分流）
-- [ ] N 个 Issue 超过 7 天未回复
-- [ ] N 个 PR 等待审查
-```
+输出仓库状态摘要（模板见 `references/triage-workflow.md` § 仓库状态摘要模板）：未关闭 Issue/PR 数、待分流/待审查数、需要关注清单。
 
 ### 2.3 检查已有标签体系
 
@@ -136,7 +126,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 1. 标记 `type:security` + `priority:P0`
 2. 不在公开评论中确认或讨论漏洞细节
-3. 引导提交者使用 GitHub Private Vulnerability Reporting
+3. 引导提交者使用 GitHub Private Vulnerability Reporting；并确认仓库已在 Settings → Code security 启用该通道（`gh api repos/{owner}/{repo}/private-vulnerability-reporting` 返回 `{"enabled":true}` 即开启，出处：GitHub Docs，2026-08 核实）
 4. 关闭公开 Issue（或转为私密）
 5. 在 Security Advisory 中跟踪
 
@@ -159,19 +149,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 3.5 分流结果展示
 
-逐个 Issue 展示分析结果：
-
-```
-### Issue #{number}: {title}
-- 提交者：@{user}（首次贡献 / 活跃贡献者）
-- 分类：Bug / 功能请求 / 使用问题 / 文档 / 需要更多信息
-- 建议优先级：P1
-- 建议标签：type:bug, priority:P1
-- 疑似重复：无 / 可能是 #{other_number} 的重复
-- 建议操作：标记标签 + 回复 / 关闭 / 转 Discussion
-```
-
-**用户确认后**，调用 `issue_write` 添加标签，或调用 `add_issue_comment` 添加回复。
+逐个 Issue 展示分析结果（模板见 `references/triage-workflow.md` § 分流结果展示模板）。**用户确认后**，调用 `issue_write` 添加标签，或调用 `add_issue_comment` 添加回复。
 
 > 详细的标签体系、分流决策树和边界情况处理见 `references/triage-workflow.md`。
 
@@ -226,33 +204,9 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 5.2 生成审查意见
 
-输出审查摘要供维护者参考：
+输出审查摘要供维护者参考（模板见 `references/pr-review-guide.md` § 审查意见模板）：改动范围、CI 状态、自动检查清单、建议与建议操作三段式。**用户确认后**，调用 `pull_request_review_write` 提交审查，或 `merge_pull_request` 合并。
 
-```
-### PR #{number}: {title}
-- 提交者：@{user}（首次贡献 / 活跃贡献者）
-- 关联 Issue：#{number} / 无
-- 改动范围：N 个文件，+X / -Y 行
-- 改动类型：Bug Fix / Feature / Docs / Refactor
-- CI/CD 状态：✅ 全部通过 / ❌ 有失败 / ⏳ 进行中
-- 可合并状态：✅ 无冲突 / ⚠️ 有冲突 / 🔒 被阻塞
-
-#### 自动检查
-- [ ] CI/CD 检查是否全部通过
-- [ ] 是否包含测试（如适用）
-- [ ] 是否有破坏性变更
-- [ ] 是否更新了文档（如适用）
-- [ ] 代码风格是否一致
-- [ ] CODEOWNERS 审查是否完成（如配置了 CODEOWNERS）
-
-#### 建议
-- [列出具体建议]
-
-#### 建议操作
-- 批准并合并 / 需要修改 / 拒绝（说明原因）
-```
-
-**用户确认后**，调用 `pull_request_review_write` 提交审查，或 `merge_pull_request` 合并。
+> **Merge Queue 提示（2026-08 核实，GitHub Docs）**：启用了 Merge Queue 的仓库，approved 的 PR 会入队排队并在合并前重跑必需检查——approve ≠ 立即合并。维护者侧可建议高流量项目启用 Merge Queue 保护 main；代贡献者入队用 `gh pr merge --auto`。
 
 > PR 审查的详细检查清单和常见问题见 `references/pr-review-guide.md`。
 
@@ -289,26 +243,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 6.3 生成版本更新方案
 
-```
-### 版本更新建议
-
-- 当前版本：v1.2.3
-- 合并的 PR：
-  - #42 fix: 修复登录超时问题（patch）
-  - #45 feat: 新增导出功能（minor）
-- 建议新版本：v1.3.0（取最高版本段）
-- 版本文件：`package.json`
-
-### Changelog 草稿
-
-## v1.3.0 (2026-06-20)
-
-### Features
-- 新增导出功能 (#45) by @contributor
-
-### Bug Fixes
-- 修复登录超时问题 (#42) by @contributor
-```
+按合并 PR 的类型（`feat`→minor、`fix`→patch、breaking→major）取最高版本段给出建议新版本，并生成 Changelog 草稿（完整示例见 `references/release-workflow.md` § 版本更新方案示例）。
 
 ### 6.4 执行版本更新
 
@@ -321,15 +256,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 6.5 版本号同步清单
 
-版本号必须在以下所有位置保持一致，漏一个就会让用户看到不一致的版本号：
-
-| # | 位置 | 具体内容 | 作用 |
-|---|------|----------|------|
-| 1 | 版本文件 | `package.json` / `pyproject.toml` / `Cargo.toml` 等 | 包管理器识别 |
-| 2 | README 徽章 | shields.io 版本徽章（如 `version-1.1.0-green`） | 项目首页展示 |
-| 3 | SKILL.md frontmatter | `version: 1.1.0`（如果是 Skill 项目） | Agent 识别用 |
-| 4 | Git tag | `git tag -a v1.1.0` | GitHub Tags 页面 |
-| 5 | GitHub Release | 基于 tag 创建 | Releases 正式发布页 |
+版本号必须在所有以下位置保持一致，漏一个就会让用户看到不一致的版本号（详细清单见 `references/release-workflow.md` § 版本号同步清单）：版本文件、README 徽章、SKILL.md frontmatter、git tag、GitHub Release。
 
 > tag 和 Release 是两回事：tag 只是指针，Release 是带说明的发布页面。两者都需要创建。
 
@@ -398,33 +325,7 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 8.2 报告模板
 
-```
-## 运营报告 — {owner}/{repo}
-报告周期：{start_date} ~ {end_date}
-
-### 数据概览
-| 指标 | 本期 | 上期 | 变化 |
-|------|------|------|------|
-| 新 Issue | N | N | +X% |
-| 关闭 Issue | N | N | -X% |
-| Issue 关闭率 | X% | X% | +X% |
-| 平均响应时间 | Xh | Xh | 改善/恶化 |
-| 平均解决时间 | Xd | Xd | 改善/恶化 |
-| 新 PR | N | N | +X% |
-| 合并 PR | N | N | -X% |
-| PR 合并率 | X% | X% | +X% |
-| 首次贡献者 | N | N | +X% |
-| Star | +N | +N | +X% |
-
-### 健康评估
-- Issue 响应时间：良好（<24h）/ 一般（1-3天）/ 需改进（>3天）
-- Issue 积压：健康（<10）/ 一般（10-30）/ 过多（>30）
-- PR 积压：健康（<5）/ 一般（5-15）/ 过多（>15）
-- Issue 关闭率：健康（>80%）/ 一般（50-80%）/ 需改进（<50%）
-
-### 建议
-- [根据数据给出具体建议]
-```
+报告模板（数据概览表 + 健康评估 + 建议）与完整指标清单见 `references/reporting.md`。
 
 ### 8.3 报告周期
 
@@ -441,14 +342,18 @@ Step 9: 自动化配置（按需生成 GitHub Actions 模板）
 
 ### 9.1 可配置的自动化
 
-| 自动化 | 功能 | 生成文件 |
-|--------|------|----------|
-| Stale Bot | 自动标记/关闭过期 Issue | `.github/workflows/stale.yml` |
-| Issue Labeler | 根据 Issue 内容自动添加标签 | `.github/workflows/labeler.yml` + `.github/labeler.yml` |
-| Welcome Bot | 欢迎首次贡献者 | `.github/workflows/welcome.yml` |
-| Auto-assign | 自动分配 Issue/PR 给维护者 | `.github/workflows/auto-assign.yml` |
-| Dependabot | 依赖安全更新和版本更新 | `.github/dependabot.yml` |
-| CODEOWNERS | 按文件路径自动请求审查 | `.github/CODEOWNERS` |
+> 以下模板的完整 YAML 均在本技能 `references/automation-templates.md` 内；「目标文件路径」指生成内容写入**用户项目**时的放置位置，不是本仓库的文件。
+
+| 自动化 | 功能 | 模板出处 → 目标文件路径 |
+|--------|------|--------------------------|
+| Stale Bot | 自动标记/关闭过期 Issue | automation-templates § Stale Bot → 目标仓库 .github/workflows/stale.yml |
+| Issue Labeler | 根据 Issue 内容自动添加标签 | automation-templates § Issue Labeler → 目标仓库 .github/workflows/labeler.yml + .github/labeler.yml |
+| Welcome Bot | 欢迎首次贡献者 | automation-templates § Welcome Bot → 目标仓库 .github/workflows/welcome.yml |
+| Auto-assign | 自动分配 Issue/PR 给维护者 | automation-templates § Auto-assign → 目标仓库 .github/workflows/auto-assign.yml |
+| Dependabot | 依赖安全更新和版本更新 | automation-templates § Dependabot → 目标仓库 .github/dependabot.yml |
+| CODEOWNERS | 按文件路径自动请求审查 | automation-templates § CODEOWNERS → 目标仓库 .github/CODEOWNERS |
+
+> 分支保护优先用 **Rulesets** 而非传统 branch protection：可强制 commit signoff、必需评审，且 push rules 会作用于整个 fork 网络（贡献者的 Fork 也受约束）。配置入口：仓库 Settings → Rules → Rulesets；用 `gh api repos/{owner}/{repo}/rulesets` 核查生效规则。（出处：GitHub Docs "About rulesets"，2026-08 核实）
 
 ### 9.2 配置流程
 

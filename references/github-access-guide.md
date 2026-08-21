@@ -2,6 +2,15 @@
 
 This guide defines how GitHub OSS Ops selects an access path without collecting credentials.
 
+## 目录
+
+- [Decision order](#decision-order)
+- [Minimum-permission examples](#minimum-permission-examples)
+- [REST fallback](#rest-fallback)
+- [Approval boundary](#approval-boundary)
+- [Failure handling](#failure-handling)
+- [Authoritative references](#authoritative-references)
+
 ## Decision order
 
 ### 1. Public read-only work

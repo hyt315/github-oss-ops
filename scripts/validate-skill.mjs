@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const expectedName = 'github-oss-ops';
-const expectedVersion = '1.1.0';
+const expectedVersion = '1.2.0';
 const required = [
   'SKILL.md', 'README.md', 'LICENSE', 'CHANGELOG.md', 'CONTRIBUTING.md',
   'CODE_OF_CONDUCT.md', 'SECURITY.md', 'CONTRIBUTORS.md',

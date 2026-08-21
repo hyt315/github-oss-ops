@@ -318,3 +318,40 @@ gh release create v1.3.0 --title "v1.3.0" --notes "### Added..." --target main
 | 多个版本文件 | 项目同时在多处声明版本 | 全部更新，保持一致 |
 | PR 没有标签 | 无法自动判断改动类型 | 读取 PR 的改动文件，分析是否涉及公开 API 变更 |
 | Release 创建失败 | Token 缺少 `contents: write` 权限 | 检查 PAT 权限或 Fine-grained PAT 的仓库权限设置 |
+
+---
+
+## 版本更新方案示例（SKILL.md 6.3 内嵌）
+
+```text
+### 版本更新建议
+
+- 当前版本：v1.2.3
+- 合并的 PR：
+  - #42 fix: 修复登录超时问题（patch）
+  - #45 feat: 新增导出功能（minor）
+- 建议新版本：v1.3.0（取最高版本段）
+- 版本文件：`package.json`
+
+### Changelog 草稿
+
+## v1.3.0 (2026-06-20)
+
+### Features
+- 新增导出功能 (#45) by @contributor
+
+### Bug Fixes
+- 修复登录超时问题 (#42) by @contributor
+```
+
+## 版本号同步清单（SKILL.md 6.5 移入）
+
+| # | 位置 | 具体内容 | 作用 |
+|---|------|----------|------|
+| 1 | 版本文件 | `package.json` / `pyproject.toml` / `Cargo.toml` 等 | 包管理器识别 |
+| 2 | README 徽章 | shields.io 版本徽章 | 项目首页展示 |
+| 3 | SKILL.md frontmatter | `version: x.y.z`（如果是 Skill 项目） | Agent 识别用 |
+| 4 | Git tag | `git tag -a vx.y.z` | GitHub Tags 页面 |
+| 5 | GitHub Release | 基于 tag 创建 | Releases 正式发布页 |
+
+> tag 和 Release 是两回事：tag 只是指针，Release 是带说明的发布页面。两者都需要创建。

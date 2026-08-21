@@ -21,6 +21,8 @@
 
 自动标记和关闭长期无活动的 Issue 和 PR。
 
+> **版本提示（2026-08 核实）**：actions/stale 最新主版本为 V11（内部迁移 ESM，输入输出行为不变），官方 README 示例仍写 `@v10`——生产建议先用 `@v10`，确认 V11 正式发布后再升。该 action 由 GitHub 官方 actions 组织维护，活跃。
+
 ```yaml
 # .github/workflows/stale.yml
 name: Stale Issues
