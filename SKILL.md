@@ -39,6 +39,18 @@ description: Use when maintaining an open-source GitHub repository after launch,
 
 ---
 
+## Reference Files
+
+七个参考文件承载本技能的运营方法与模板。references 不会自动加载——以下时机必须读取对应文件：
+
+- Step 3 分流 Issue 时，读 `references/triage-workflow.md`：分类决策树、安全漏洞流程、批量处理与展示模板
+- Step 4 起草回复时，读 `references/response-templates.md`：各场景回复模板
+- Step 5 审查 PR 时，读 `references/pr-review-guide.md`：审查清单、合并方式建议与意见模板
+- Step 6 版本管理时，读 `references/release-workflow.md`：semver 规则、版本文件模板与 Release 流程
+- Step 8 出运营报告时，读 `references/reporting.md`：指标清单与报告模板
+- Step 9 配置自动化时，读 `references/automation-templates.md`：stale/labeler/welcome/auto-assign/dependabot 完整 YAML 与参数说明
+- 判断认证与权限时，读 `references/github-access-guide.md`：授权路径优先级与最小权限示例
+
 ## 工作流程
 
 ```
