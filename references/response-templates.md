@@ -418,3 +418,27 @@ Dependabot 版本更新 PR。
 
 建议先在单独的分支上测试，确认无问题后再合并。
 ```
+
+---
+
+## 2026 专项场景回复模板
+
+### 1. 首次贡献者 (First-time Contributor) 热烈致谢
+```markdown
+🎉 @{username} 感谢你为 {project_name} 提交的第一个 Pull Request！代码非常整洁，我们已经将其合并。欢迎在未来继续参与贡献！🙌
+```
+
+### 2. 礼貌拒绝 AI 生成的低质 / 刷绿点 PR
+```markdown
+感谢你的关注。本项目目前不接受仅包含微小空格调整、机械重命名或未经充分测试的自动化提交。我们鼓励关注标有 `good first issue` 或 `help wanted` 的实质性功能与 Bug 修复。感谢理解！
+```
+
+### 3. 引导使用问题转入 GitHub Discussions
+```markdown
+你好！Issue 跟踪器主要用于跟踪确认的代码缺陷和待办功能。关于具体的使用咨询与配置探讨，建议移步至 [GitHub Discussions](https://github.com/owner/repo/discussions)，社区成员会在那里提供解答与交流。感谢配合！
+```
+
+### 4. 发现疑似安全漏洞引导转入私有渠道
+```markdown
+⚠️ 感谢反馈。为了保护所有用户的安全，请勿在公开 Issue 中讨论潜在的安全敏感漏洞。请通过仓库顶部的 **Security → Report a vulnerability** 提交私有漏洞报告，或联系安全维护者邮箱。本 Issue 将暂时关闭以防敏感信息扩散。
+```

@@ -1,8 +1,19 @@
 # Changelog
 
-All notable changes to GitHub OSS Ops are documented here.
+本项目采用 [Conventional Commits](https://www.conventionalcommits.org/) 格式记录变更。
 
-## [1.2.0] - 2026-08-21
+## [2.0.0] - 2026-09-02
+
+### 🌟 Major Upgrade: 全景运营中枢、AI 垃圾防御、GHSA 私有漏洞协同与全渠道发版广播
+
+- **渐进式调度架构重构**：`SKILL.md` 瘦身为轻量高信号调度中枢（105 行，~2143 tokens），严格按需索引 8 本参考手册；
+- **AI 幻觉与垃圾 Issue/PR 防御**：新增虚假报错堆栈、虚构 API 识别与刷 KPI 贡献防御机制；
+- **GitHub 官方 PVR 与 GHSA 私有安全协同**：新增 `references/security-vulnerability-sop.md`，提供 Temporary Private Fork、CVE 申请与协同披露 SOP；
+- **全渠道发版广播中枢**：在 `references/release-workflow.md` 中新增 Twitter/X、Reddit、Discord、V2EX、微信全渠道广播推文模板；
+- **社区治理与 All Contributors 致谢**：新增 `references/community-and-contributors.md`，覆盖冲突 4 级降温处置、24 种贡献类型致谢与 GitHub Sponsors 运营；
+- **门面与文档全面升级**：中英双语 README 达到 PREP 黄金规范标准。
+
+6-08-21
 
 ### Added
 

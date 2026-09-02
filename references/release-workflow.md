@@ -355,3 +355,67 @@ gh release create v1.3.0 --title "v1.3.0" --notes "### Added..." --target main
 | 5 | GitHub Release | 基于 tag 创建 | Releases 正式发布页 |
 
 > tag 和 Release 是两回事：tag 只是指针，Release 是带说明的发布页面。两者都需要创建。
+
+---
+
+## 发版后全渠道社交广播文案模板库 (Release Broadcasting)
+
+发版完成后，向多渠道开发者社区同步广播：
+
+### 1. Twitter / X 短推文模板 (280 字符)
+```text
+🚀 {project_name} {version} is officially released!
+
+Key Highlights:
+✨ {feature_1}
+🐛 {fix_1}
+⚡ {perf_1}
+
+Special thanks to all our amazing contributors! 🙌
+📦 Full Release Notes & Download: {release_url}
+
+#OpenSource #GitHub #{tag}
+```
+
+### 2. Reddit / Hacker News 深度发布贴模板
+```text
+Title: {project_name} {version} released - {one_sentence_pitch}
+
+Hey r/opensource,
+
+We just shipped {version} of {project_name}! In this release, we focused heavily on {main_theme}.
+
+What's New:
+- {feature_1_details}
+- {feature_2_details}
+- {breaking_change_or_perf_details}
+
+Try it out:
+`{install_command}`
+
+GitHub Repo: {repo_url}
+Full Changelog: {release_url}
+
+Feedback and contributions are warmly welcome!
+```
+
+### 3. V2EX / 掘金 / 微信公众号发布文案模板
+```text
+标题：【开源发布】{project_name} {version} 正式发布：{核心卖点一句话}
+
+大家好，{project_name} 迎来了全新的 {version} 版本！本次更新带来了以下重点特性：
+
+🌟 核心亮点：
+1. 【新增】{feature_1}：{详细说明}；
+2. 【优化】{feature_2}：{详细说明}；
+3. 【修复】{fix_1}：{详细说明}。
+
+🚀 快速开始：
+{install_code_block}
+
+🔗 链接直达：
+- GitHub 仓库：{repo_url}
+- 完整发版日志：{release_url}
+
+欢迎各位开发者 Star ⭐ 体验与提出建议！
+```

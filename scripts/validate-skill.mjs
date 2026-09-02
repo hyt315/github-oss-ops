@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const expectedName = 'github-oss-ops';
-const expectedVersion = '1.2.0';
+const expectedVersion = '2.0.0';
 const required = [
   'SKILL.md', 'README.md', 'LICENSE', 'CHANGELOG.md', 'CONTRIBUTING.md',
   'CODE_OF_CONDUCT.md', 'SECURITY.md', 'CONTRIBUTORS.md',
@@ -25,7 +25,7 @@ const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
 const changelog = fs.readFileSync(path.join(root, 'CHANGELOG.md'), 'utf8');
 const metadata = fs.readFileSync(path.join(root, '.github/repository-metadata.yml'), 'utf8');
 
-if (!skill.startsWith('---\n')) fail('SKILL.md must start with YAML frontmatter');
+if (!skill.startsWith('---\n') && !skill.startsWith('---\r\n')) fail('SKILL.md must start with YAML frontmatter');
 if (!skill.includes(`name: ${expectedName}`)) fail('SKILL.md name mismatch');
 if (!skill.includes(`version: ${expectedVersion}`)) fail('SKILL.md version mismatch');
 if (!/^description:\s*.+/m.test(skill)) fail('SKILL.md description is missing');

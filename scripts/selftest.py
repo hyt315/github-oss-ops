@@ -74,7 +74,7 @@ if not any("Step" in f for f in check_skill_text(bad, ROOT.name)):
     failures.append("negative: missing-step sample NOT detected")
 
 # 负向用例：孤儿引用检测必须生效（抽掉一个真实引用）
-no_ref_text = text.replace("`references/triage-workflow.md`", "triage-workflow")
+no_ref_text = text.replace("references/triage-workflow.md", "triage-workflow")
 if not any("orphan" in f for f in check_skill_text(no_ref_text, ROOT.name)):
     failures.append("negative: orphan reference NOT detected")
 

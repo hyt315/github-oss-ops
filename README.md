@@ -2,9 +2,9 @@
 
 <div align="center">
 
-**给独立维护者和小团队用的 GitHub 运营 Agent Skill：智能分流 Issue、辅助 PR 审查、自动化版本发布，所有外部写操作均留在明确批准之后。**
+**给独立维护者与开源团队打造的 AI 运营中枢：智能分流 Issue、AI 垃圾防御、PR 辅助审查、GHSA 私有漏洞协同、自动化版本发布与全渠道广播宣发。**
 
-**Approval-gated GitHub repository operations skill for maintainers — intelligent issue triage, PR review assistance, and release management.**
+**Industrial-grade GitHub repository operations skill for maintainers — intelligent issue triage, AI slop defense, PR review, GHSA vulnerability SOP, release management, and multi-channel broadcasting.**
 
 [![Validate](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml/badge.svg)](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml)
 [![Release](https://img.shields.io/github/v/release/hyt315/github-oss-ops?sort=semver)](https://github.com/hyt315/github-oss-ops/releases/latest)
@@ -23,10 +23,11 @@
 ## 📖 这是什么？
 
 项目开源发布只是开始，维护者的日常运营才是长跑：
-- 每天面对堆积如山的新 Issue，需要判断是否重复、确定优先级、起草礼貌回复；
-- 收到外部贡献的 PR 时，需要核验 Diff 范围、CI 状态、测试覆盖率与破坏性风险；
-- 准备发版时，需要按 SemVer 规范从已合并改动中自动生成 Release 说明与变更日志；
-- 面对长期无响应的僵尸 Issue/PR，需要温和提示而非简单粗暴关闭。
+- 每天面对大量新 Issue，需要识别是否为大模型虚构的“AI 幻觉 Bug”，并将开放式咨询转入 Discussions；
+- 收到外部 PR 时，需要核验 Diff 范围、CI 状态、破坏性风险，防范纯改空格刷贡献的“低质 PR”；
+- 收到安全报告时，需要遵循官方 Private Vulnerability Reporting (PVR) 与 GHSA 协同流程，严防在公开 Issue 泄露 0-day；
+- 准备发版时，需要按 SemVer 规范从已合并改动中自动生成 Release 说明，并向 Twitter/Reddit/微信等全渠道同步广播推文；
+- 面对社区冲突与负面言论，需要去情绪化的 4 级降温处置 SOP。
 
 **`github-oss-ops`** 将这些繁重步骤组织成 **可复核、结构化、自动化的高效工作流**，同时 **严格保留人的最终决定权** —— 所有外部写操作（发布评论、打标签、合并 PR、打 Tag、创建 Release）均在用户明确批准后才执行。
 
@@ -36,28 +37,38 @@
 
 | 核心工作流 | 覆盖功能与操作 | 带来价值与默认边界 |
 |---|---|---|
-| 📋 **Issue 智能分流** | 聚合新 Issue、判断类型/优先级/重复项、起草结构化回复草稿 | 读取全自动；评论、标签、关闭操作必须获得人工授权 |
-| 🔍 **PR 辅助审查** | 汇总 Diff 范围、CI 状态、破坏性风险、测试有效性与发版影响 | 绝不伪装成人类审查，未经确认不向 PR 提交 Review |
-| 🚀 **Release 版本管理** | 依据已合并 PR 建议 SemVer 版本号、生成变更日志、核对版本一致性 | Tag、Release 与资产推送分别独立确认 |
-| 🧹 **Stale 僵尸项管理** | 智能识别长期无响应 Issue/PR 并提出温和分批处理建议 | 绝不擅自批量自动关闭，保护社区积极性 |
-| 📊 **运营洞察周报** | 统计平均响应时间、PR 积压量、合并节奏与健康度指标 | 区分客观事实、推断与运营建议 |
+| 📋 **Issue 智能分流与防伪** | 聚合新 Issue、判断类型/优先级、**识别 2026 AI 幻觉 Issue**、引导转入 Discussions | 读取全自动；评论、标签、关闭操作必须获得人工授权 |
+| 🔍 **PR 辅助审查与防刷** | 汇总 Diff 范围、CI 状态、**防范刷 KPI 式低质 PR**、核验 Rulesets 与 Merge Queue | 绝不伪装成人类审查，未经确认不向 PR 提交 Review |
+| 🛡️ **GHSA 私有安全协同** | 官方 PVR 私有漏洞接收、创建 Temporary Private Fork 协同修复、申请正式 CVE ID | 严禁在公开 Issue 讨论漏洞，闭环安全通报 |
+| 🚀 **SemVer 发版与社交广播** | 依据已合并 PR 建议 SemVer 版本号、生成分类变更日志、**全渠道社交广播推文 (X/Reddit/微信)** | Tag、Release 与资产推送分别独立确认 |
+| 🤝 **社区治理与贡献者阶梯** | 社区冲突 4 级降温处置（隐藏评论/锁定讨论/封禁）、**All Contributors 24 种贡献致谢** | 规范化社区氛围，保障维护者心理健康 |
+| 💰 **Sponsors 赞助与商业支持** | `.github/FUNDING.yml` 平台配置、赞助层级设计 (Sponsor Tiers) 与商业支持引导 | 助力开源项目实现财务与生态可持续发展 |
+| 📊 **运营洞察与自动化** | 统计平均响应时间 (MTTR)、合并节奏 (MTTM)、配置 Stale Bot 与自动打标 CI | 区分客观事实、推断与运营建议 |
 
 ---
 
-## 📊 开源运营五大工作流架构
+## 📊 开源运营全流程架构
 
 ```
 [输入: 用户指示扫描仓库 / 分流 Issue / 审查 PR / 准备发版]
                                │
-       [Workflow 1: Issue 智能分流与查重] ──> 生成分类与回复建议草稿
+   [Step 1: 目标仓库与权限探查] ──> 读 references/github-access-guide.md
                                │
-       [Workflow 2: PR 风险与 CI 辅助审查] ─> 检查测试覆盖与潜在破坏
+   [Step 2: 仓库健康状态扫描] ────> 聚合 open Issue/PR 列表与近期动态
                                │
-       [Workflow 3: SemVer 推荐与 Release] ─> 汇总合并 PR，生成版本说明
+   [Step 3: Issue 分流与防伪] ────> 读 references/triage-workflow.md (AI 幻觉识别 + 转 Discussion)
                                │
-       [Workflow 4: Stale 僵尸项温和治理] ──> 区分活跃度，分批温和提醒
+   [Step 4: 结构化回复生成] ──────> 读 references/response-templates.md (生成草稿 → 获批后发送)
                                │
-       [Workflow 5: 社区健康与运营周报] ────> 统计响应时效与节奏报告
+   [Step 5: PR 辅助审查与防刷] ───> 读 references/pr-review-guide.md (Diff 范围 + Breaking 检查)
+                               │
+   [Step 6: 私有安全漏洞协同] ────> 读 references/security-vulnerability-sop.md (PVR + Fork + CVE)
+                               │
+   [Step 7: 发版与全渠道广播] ────> 读 references/release-workflow.md (SemVer + X/Reddit 广播)
+                               │
+   [Step 8: 社区治理与致谢] ──────> 读 references/community-and-contributors.md (降温 + All Contributors)
+                               │
+   [Step 9: 自动化与洞察周报] ────> 读 references/automation-templates.md 与 reporting.md
 ```
 
 ---
@@ -79,7 +90,7 @@
 
 把下面这段话直接复制发送给你的 AI 助手，它会自动完成安装：
 
-> 请安装 github-oss-ops 技能：克隆 `https://github.com/hyt315/github-oss-ops` 到你的 skills 目录（如 `~/.claude/skills/github-oss-ops`、`~/.agents/skills/github-oss-ops` 或 `~/.cursor/skills/github-oss-ops`），并确认安装成功。以后我要「管理我的开源项目 / 分流 Issue / 审查 PR / 发版 / 出周报」时，按 SKILL.md 的流程引导我完成，所有写操作都在我确认后执行。
+> 请安装 github-oss-ops 技能：克隆 `https://github.com/hyt315/github-oss-ops` 到你的 skills 目录（如 `~/.claude/skills/github-oss-ops`、`~/.agents/skills/github-oss-ops` 或 `~/.cursor/skills/github-oss-ops`），并确认安装成功。以后我要「管理我的开源项目 / 分流 Issue / 审查 PR / 漏洞协同 / 发版广播 / 出周报」时，按 SKILL.md 的流程引导我完成，所有写操作都在我确认后执行。
 
 ### 方式 B：GitHub CLI 2.90+（一行命令）
 
@@ -99,16 +110,24 @@ gh skill install hyt315/github-oss-ops github-oss-ops --agent claude-code --scop
 ### 方式 D：本地运行回归自测
 
 ```powershell
+# 运行结构校验
+node scripts/validate-skill.mjs
+
+# 运行自动化回归自测
 python scripts/selftest.py
+
+# 用 skill-doctor 审查
+python path/to/skill-doctor/scripts/audit.py . --dynamic
 ```
 
 ---
 
-## 🔒 权限边界与安全原则
+## 🔒 权限与安全原则
 
-- **只读分析优先**：仓库状态扫描、Issue 分流分析与 PR 风险评估纯本地只读执行；
-- **严格确认门禁**：添加标签、发表评论、关闭 Issue、提交 Review、打 Tag 与发布 Release 必须经用户确认；
-- **事实与推断分离**：运营报告中明确区分硬性数据事实与 AI 建议。
+- **严格只读默认**：扫描公开仓库无需任何 Token，仅分析公开数据并生成草稿；
+- **读写分离与确认门禁**：所有评论发送、打标签、关闭 Issue、合并 PR、打 Tag、创建 Release，必须明确展示目标和内容，并在执行前获得用户明确确认；
+- **凭据零采集**：绝不在聊天中索取 Token，绝不主动搜索用户本地私有配置文件；
+- **最小权限策略**：仅申请当前操作所需的最小权限（如 Issue 只读仅需 `issues:read`）。
 
 ---
 
@@ -125,11 +144,27 @@ python scripts/selftest.py
 
 ---
 
+## 📖 深度参考手册导读
+
+| 参考文档 | 核心内容 | 推荐阅读时机 | 预估耗时 |
+|---|---|---|---|
+| 📋 [**Issue 分流工作流 (`triage-workflow.md`)**](references/triage-workflow.md) | 分类决策树、AI 幻觉识别、转 Discussions 与优先级矩阵 | 分流新 Issue 与过滤垃圾提报时 | 4 分钟 |
+| 💬 [**回复模板库 (`response-templates.md`)**](references/response-templates.md) | 各种日常场景的中英文回复模板与首次贡献致谢 | 起草回复草稿时 | 3 分钟 |
+| 🔍 [**PR 审查指南 (`pr-review-guide.md`)**](references/pr-review-guide.md) | 审查清单、刷 KPI 贡献防御、Rulesets 与合并策略 | 审查外部 PR 时 | 4 分钟 |
+| 🛡️ [**私有安全协同 SOP (`security-vulnerability-sop.md`)**](references/security-vulnerability-sop.md) | 官方 PVR、临时私有 Fork 修复、申请 CVE 与 GHSA 公开披露 | 接收并处置安全漏洞时 | 4 分钟 |
+| 🚀 [**版本发布工作流 (`release-workflow.md`)**](references/release-workflow.md) | SemVer 语义化规则、Release 说明模板与社交广播推文 | 准备打 Tag 和发布新版本时 | 4 分钟 |
+| 🤝 [**社区治理与贡献者 (`community-and-contributors.md`)**](references/community-and-contributors.md) | 社区冲突 4 级降温处置、All Contributors 致谢与 Sponsors 运营 | 处置冲突或运营贡献者生态时 | 4 分钟 |
+| ⚙️ [**自动化模板 (`automation-templates.md`)**](references/automation-templates.md) | Stale Bot、Release Drafter、Issue Labeler 完整配置 | 搭建仓库自动化 CI 时 | 4 分钟 |
+| 📊 [**运营报告指南 (`reporting.md`)**](references/reporting.md) | 核心指标定义（MTTR/MTTM）与运营周报模板 | 周期性复盘项目健康度时 | 3 分钟 |
+| 🔑 [**GitHub 授权指南 (`github-access-guide.md`)**](references/github-access-guide.md) | 5 级授权优先级、最小权限配置与回退路径 | 需要写操作或配置访问时 | 3 分钟 |
+
+---
+
 ## 📁 文件结构
 
 ```
 github-oss-ops/
-├── SKILL.md                          # 核心技能定义与运营工作流
+├── SKILL.md                          # 核心技能定义、渐进式调度中枢与 9 大运营阶段
 ├── README.md                         # 中文说明文档
 ├── README.en.md                      # 英文说明文档
 ├── CHANGELOG.md                      # 版本发布记录
@@ -138,27 +173,36 @@ github-oss-ops/
 ├── CONTRIBUTING.md                   # 社区贡献指南
 ├── CODE_OF_CONDUCT.md                # 行为准则
 ├── SECURITY.md                       # 安全策略
-├── SUPPORT.md                        # 支持渠道
+├── CONTRIBUTORS.md                   # 贡献者名单
 ├── manifest.json                     # 技能元数据清单
 ├── agents/                           # 多 Agent 平台元数据
-├── examples/README.md                # 三个可复核的端到端案例
+├── assets/                           # 门面配图与预览图
+├── examples/                         # 三大实战案例
 ├── scripts/
-│   ├── validate-skill.mjs            # 技能自检器
-│   ├── validate_repo.py              # 结构与隐私安全验证器
+│   ├── validate-skill.mjs            # 结构与安全校验脚本
 │   └── selftest.py                   # 自动化回归自测脚本
-└── references/                       # 运营规范、PR 审查与发版指南
+└── references/                       # 8 本深度运营手册
+    ├── triage-workflow.md            # Issue 分流决策树与 AI 幻觉识别
+    ├── response-templates.md         # 多场景回复模板与首次贡献致谢
+    ├── pr-review-guide.md            # PR 审查清单与刷 KPI 贡献防御
+    ├── security-vulnerability-sop.md # 官方 PVR、临时私有 Fork 与 CVE 协同
+    ├── release-workflow.md           # SemVer 发版与全渠道社交广播推文
+    ├── community-and-contributors.md # 社区冲突 4 级降温与 All Contributors
+    ├── automation-templates.md       # Stale / Release Drafter / Labeler 配置
+    ├── reporting.md                  # MTTR/MTTM 指标与运营周报
+    └── github-access-guide.md        # 5 级授权路径与最小权限指南
 ```
 
 ---
 
 ## ❓ 常见问题 (FAQ)
 
-- **Q: 技能会自动帮我给 Issue 打标签或回复吗？**  
-  A: 不会。技能会先生成结构化的分类判断与回复草稿，只有在获得你的批准后才会调用 API 提交。
-- **Q: 如何确保版本号建议符合语义化版本规范（SemVer）？**  
-  A: 技能在 Phase 3 会严格核对自上一版本以来的所有 PR 变更，若存在破坏性改动建议 Major，有新功能建议 Minor，纯修复建议 Patch。
-- **Q: 运行本技能需要什么权限的 Token？**  
-  A: 日常只读扫描仅需 `repo` 读权限或无 Token 访问公开仓库；执行评论/发版写操作时按需使用 Fine-grained PAT。
+- **Q: 为什么所有的写操作都需要人工确认？**  
+  A: 开源项目维护者的一言一行直接代表项目公信力。读写分离确保 AI 只能在后台准备好分析和草稿，绝不会发生“AI 自动回复愚蠢内容”或“自动误关关键 Issue”的事故。
+- **Q: 如何防御 2026 年大模型批量生成的“假 Bug 报告”？**  
+  A: `triage-workflow.md` 提供了 AI 幻觉 Issue 识别特征库（虚构 API、无法对齐的报错堆栈），并配有标准的礼貌劝退模板与仓库并发限制指引。
+- **Q: 收到疑似安全漏洞为什么绝不能在公开 Issue 回复？**  
+  A: 公开披露漏洞细节会导致未打补丁的用户暴露在 0-day 攻击风险下。技能指导维护者使用 GitHub 官方 Private Vulnerability Reporting (PVR)，在临时私有分叉中协同开发补丁并分配 CVE。
 
 ---
 
