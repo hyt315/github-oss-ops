@@ -9,6 +9,7 @@
 [![Validate](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml/badge.svg)](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml)
 [![Release](https://img.shields.io/github/v/release/hyt315/github-oss-ops?sort=semver)](https://github.com/hyt315/github-oss-ops/releases/latest)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
+[![Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20Python)-brightgreen)](SKILL.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/hyt315/github-oss-ops?style=social)](https://github.com/hyt315/github-oss-ops/stargazers)
 
@@ -69,6 +70,40 @@
    [Step 8: 社区治理与致谢] ──────> 读 references/community-and-contributors.md (降温 + All Contributors)
                                │
    [Step 9: 自动化与洞察周报] ────> 读 references/automation-templates.md 与 reporting.md
+```
+
+---
+
+## 🛡️ 2026 AI 垃圾防御与 GHSA 漏洞响应 SOP
+
+### 1. 2026 AI 幻觉与刷 KPI 贡献防御矩阵
+
+```
+[收到外部新提交]
+       │
+       ├──> [Issue 检测] ──> 是否包含虚构 API / 不存在配置 / 虚假报错堆栈？
+       │         │
+       │         ├── 是 ──> 标记 resolution:invalid，礼貌回复模板劝退并关闭
+       │         └── 否 ──> 正常打标分流 (Bug/Feature/Docs)，开放探讨转入 Discussions
+       │
+       └──> [PR 审查] ────> 是否仅改空格/无义注释/机械重命名 (Contribution Farming)？
+                 │
+                 ├── 是 ──> 依据贡献指南礼貌拒绝，维护主干纯洁度
+                 └── 否 ──> 辅助审查 Diff 范围、CI 状态、Breaking Changes 与测试覆盖
+```
+
+### 2. GHSA 私有安全协同 90 天闭环流程
+
+```
+[白帽研究员提交漏洞] ──> 触发 GitHub Private Vulnerability Reporting (PVR)
+                                      │
+               [创建 Temporary Private Fork 私有分叉协同修复]
+                                      │
+               [通过 GitHub 官方 CNA 一键申请正式 CVE ID]
+                                      │
+               [约定期限协同披露 (90-day Coordinated Disclosure)]
+                                      │
+               [发布 Security Advisory + 打补丁发版 ➔ Dependabot 自动通知生态]
 ```
 
 ---

@@ -9,6 +9,7 @@
 [![Validate](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml/badge.svg)](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml)
 [![Release](https://img.shields.io/github/v/release/hyt315/github-oss-ops?sort=semver)](https://github.com/hyt315/github-oss-ops/releases/latest)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
+[![Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20Python)-brightgreen)](SKILL.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/hyt315/github-oss-ops?style=social)](https://github.com/hyt315/github-oss-ops/stargazers)
 
@@ -69,6 +70,40 @@ Launching an open-source project is only the first step — daily maintenance is
    [Step 8: Community Moderation] ──────> Read references/community-and-contributors.md (De-escalation + All Contributors)
                                  │
    [Step 9: Automation & Reporting] ────> Read references/automation-templates.md & reporting.md
+```
+
+---
+
+## 🛡️ 2026 AI Slop Defense & GHSA Vulnerability SOP
+
+### 1. 2026 AI Slop & Contribution Farming Defense Matrix
+
+```
+[New Inbound Contribution]
+           │
+           ├──> [Issue Audit] ──> Contains hallucinated APIs / fake config / unaligned stack traces?
+           │         │
+           │         ├── Yes ──> Label resolution:invalid, politely reject and close
+           │         └── No ───> Normal triage (Bug/Feature/Docs), route discussions to GitHub Discussions
+           │
+           └──> [PR Review] ────> Whitespace-only / useless comments / mechanical renames (Contribution farming)?
+                     │
+                     ├── Yes ──> Politely reject per Contributing guidelines, keeping master clean
+                     └── No ───> Audit diff scope, CI status, breaking changes & test coverage
+```
+
+### 2. GHSA 90-Day Coordinated Vulnerability Disclosure Flow
+
+```
+[Researcher Reports Vulnerability] ──> Via GitHub Private Vulnerability Reporting (PVR)
+                                                   │
+                  [Create Temporary Private Fork for Collaboration]
+                                                   │
+                  [Request Official CVE ID via GitHub as CNA]
+                                                   │
+                  [90-Day Coordinated Vulnerability Disclosure Window]
+                                                   │
+                  [Publish Security Advisory + Release Patch ➔ Dependabot Alerts]
 ```
 
 ---
