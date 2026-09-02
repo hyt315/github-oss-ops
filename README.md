@@ -7,7 +7,7 @@
 **简体中文 · [English](./README.en.md)**
 
 [![Validate](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml/badge.svg)](https://github.com/hyt315/github-oss-ops/actions/workflows/validate.yml)
-[![Release](https://img.shields.io/github/v/release/hyt315/github-oss-ops?sort=semver)](https://github.com/hyt315/github-oss-ops/releases)
+[![Release](https://img.shields.io/github/v/release/hyt315/github-oss-ops?sort=semver)](https://github.com/hyt315/github-oss-ops/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/hyt315/github-oss-ops/total)](https://github.com/hyt315/github-oss-ops/releases)
 [![Contributors](https://img.shields.io/github/contributors/hyt315/github-oss-ops)](CONTRIBUTORS.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
