@@ -22,5 +22,5 @@ ruleset:
   block-force-push: true
   block-deletion: true
 release:
-  tag: v2.0.0
-  title: GitHub OSS Ops v1.1.0
+  tag: v2.1.0
+  title: GitHub OSS Ops v2.1.0

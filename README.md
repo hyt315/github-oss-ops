@@ -148,11 +148,13 @@ gh skill install hyt315/github-oss-ops github-oss-ops --agent claude-code --scop
 # 运行结构校验
 node scripts/validate-skill.mjs
 
-# 运行自动化回归自测
-python scripts/selftest.py
+# 运行本地规范全检与快速采样
+python scripts/validate_ops.py --quick
+python scripts/validate_ops.py --json
 
-# 用 skill-doctor 审查
-python path/to/skill-doctor/scripts/audit.py . --dynamic
+# 运行自动化回归自测与 AST 语法门禁
+python scripts/selftest.py
+python -m unittest discover tests
 ```
 
 ---
@@ -183,6 +185,7 @@ python path/to/skill-doctor/scripts/audit.py . --dynamic
 
 | 参考文档 | 核心内容 | 推荐阅读时机 | 预估耗时 |
 |---|---|---|---|
+| ⚠️ [**深水区避坑指南 (`github-oss-ops-pitfalls.md`)**](references/github-oss-ops-pitfalls.md) | GITHUB_TOKEN 提权、Pwn-Request 防御、Rulesets Tag 保护与 API 次级限流 | 排查供应链风险与复杂运维故障时 | 5 分钟 |
 | 📋 [**Issue 分流工作流 (`triage-workflow.md`)**](references/triage-workflow.md) | 分类决策树、AI 幻觉识别、转 Discussions 与优先级矩阵 | 分流新 Issue 与过滤垃圾提报时 | 4 分钟 |
 | 💬 [**回复模板库 (`response-templates.md`)**](references/response-templates.md) | 各种日常场景的中英文回复模板与首次贡献致谢 | 起草回复草稿时 | 3 分钟 |
 | 🔍 [**PR 审查指南 (`pr-review-guide.md`)**](references/pr-review-guide.md) | 审查清单、刷 KPI 贡献防御、Rulesets 与合并策略 | 审查外部 PR 时 | 4 分钟 |
@@ -213,10 +216,14 @@ github-oss-ops/
 ├── agents/                           # 多 Agent 平台元数据
 ├── assets/                           # 门面配图与预览图
 ├── examples/                         # 三大实战案例
+├── tests/
+│   └── test_skill.py                 # 核心规范与 AST 自动化单元测试套件
 ├── scripts/
+│   ├── validate_ops.py               # 运维就绪度与规范校验器 (--json / --quick)
 │   ├── validate-skill.mjs            # 结构与安全校验脚本
-│   └── selftest.py                   # 自动化回归自测脚本
-└── references/                       # 8 本深度运营手册
+│   └── selftest.py                   # 自动化回归自测脚本（AST 语法门禁）
+└── references/                       # 10 本深度运营手册
+    ├── github-oss-ops-pitfalls.md    # 核心避坑指南与深水区脆弱点防御
     ├── triage-workflow.md            # Issue 分流决策树与 AI 幻觉识别
     ├── response-templates.md         # 多场景回复模板与首次贡献致谢
     ├── pr-review-guide.md            # PR 审查清单与刷 KPI 贡献防御

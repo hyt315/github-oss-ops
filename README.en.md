@@ -148,11 +148,13 @@ gh skill install hyt315/github-oss-ops github-oss-ops --agent claude-code --scop
 # Run structure validation
 node scripts/validate-skill.mjs
 
-# Run regression selftest
-python scripts/selftest.py
+# Run ops readiness validator & quick sampling
+python scripts/validate_ops.py --quick
+python scripts/validate_ops.py --json
 
-# Run skill-doctor audit
-python path/to/skill-doctor/scripts/audit.py . --dynamic
+# Run regression selftest and AST syntax gates
+python scripts/selftest.py
+python -m unittest discover tests
 ```
 
 ---
@@ -183,6 +185,7 @@ python path/to/skill-doctor/scripts/audit.py . --dynamic
 
 | Reference Guide | Core Focus | When to Read | Estimated Time |
 |---|---|---|---|
+| ⚠️ [**Deep-Water Pitfalls Guide (`github-oss-ops-pitfalls.md`)**](references/github-oss-ops-pitfalls.md) | GITHUB_TOKEN escalation, Pwn-Request defense, Rulesets Tag protection, API rate limits | When debugging supply-chain or ops traps | 5 mins |
 | 📋 [**Issue Triage Workflow (`triage-workflow.md`)**](references/triage-workflow.md) | Decision trees, AI hallucination defense, Discussions routing | When triaging incoming issues | 4 mins |
 | 💬 [**Response Templates (`response-templates.md`)**](references/response-templates.md) | Standard response templates and first-timer acknowledgments | When drafting replies | 3 mins |
 | 🔍 [**PR Review Guide (`pr-review-guide.md`)**](references/pr-review-guide.md) | PR checklist, low-effort PR defense, Rulesets, merge strategies | When reviewing pull requests | 4 mins |
@@ -213,10 +216,14 @@ github-oss-ops/
 ├── agents/                           # Multi-agent metadata
 ├── assets/                           # Media assets and social previews
 ├── examples/                         # Real-world examples
+├── tests/
+│   └── test_skill.py                 # Core specification & AST regression unit tests
 ├── scripts/
+│   ├── validate_ops.py               # Ops readiness & specification validator (--json / --quick)
 │   ├── validate-skill.mjs            # Validation script
-│   └── selftest.py                   # Automated regression test runner
-└── references/                       # 8 In-depth operational guides
+│   └── selftest.py                   # Automated regression test runner (AST syntax gates)
+└── references/                       # 10 In-depth operational guides
+    ├── github-oss-ops-pitfalls.md    # Core maintainer pitfalls & deep-water vulnerability defense
     ├── triage-workflow.md            # Triage decision tree & AI hallucination defense
     ├── response-templates.md         # Reply templates & first-timer acknowledgments
     ├── pr-review-guide.md            # PR review checklist & low-effort PR defense

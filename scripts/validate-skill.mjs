@@ -3,7 +3,13 @@ import path from 'node:path';
 
 const root = process.cwd();
 const expectedName = 'github-oss-ops';
-const expectedVersion = '2.0.0';
+let expectedVersion = '2.1.0';
+try {
+  const manifestData = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
+  if (manifestData.version) expectedVersion = manifestData.version;
+} catch (err) {
+  // fallback to default
+}
 const required = [
   'SKILL.md', 'README.md', 'LICENSE', 'CHANGELOG.md', 'CONTRIBUTING.md',
   'CODE_OF_CONDUCT.md', 'SECURITY.md', 'CONTRIBUTORS.md',

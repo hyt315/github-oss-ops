@@ -2,6 +2,16 @@
 
 本项目采用 [Conventional Commits](https://www.conventionalcommits.org/) 格式记录变更。
 
+## [2.1.0] - 2026-09-06
+
+### 🌟 Minor Upgrade: 运维避坑指南落地、就绪度验证工具与 AST 语法安全防线
+
+- **深水区避坑指南全景沉淀**：新增 [references/github-oss-ops-pitfalls.md](references/github-oss-ops-pitfalls.md)，覆盖 GITHUB_TOKEN 提权风险、`pull_request_target` Pwn-Request 防御、新一代 Rulesets Tag 保护、Stale Bot 反噬与 AI 垃圾拦截、PVR 私有安全协同及 API 次级限流退避；
+- **全景运维就绪度校验器**：新增 `scripts/validate_ops.py`，支持 `--json`（结构化机读报告）、`--quick`（快速采样）与 `--read-only`（零变更保障）；
+- **动态版本感知 CI 守护**：重构 `scripts/validate-skill.mjs`，动态读取 `manifest.json` 版本号，彻底消除发版 CI 硬编码脱节隐患；
+- **AST 语法解析与多维回归**：升级 `scripts/selftest.py`，引入 `ast.parse` 静态语法解析门禁，新增 `tests/test_skill.py` 自动化测试集；
+- **统一事实卡片与安全授权宣告**：在 `SKILL.md` 中规范化定义标准 Markdown 格式的 Ops 事实卡片 (Fact Card)，固化 Zero-Mutation 铁律与破坏性写操作显式授权防线。
+
 ## [2.0.0] - 2026-09-02
 
 ### 🌟 Major Upgrade: 全景运营中枢、AI 垃圾防御、GHSA 私有漏洞协同与全渠道发版广播
