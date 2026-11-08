@@ -1,6 +1,6 @@
 # GitHub Actions 自动化模板
 
-> 开源项目运营常用的 GitHub Actions 工作流模板。SKILL.md Step 9 引用本文件。
+> 适用任务：为目标仓库配置 Stale、自动打标、欢迎、自动分配与 Dependabot。以下 YAML 是写进**目标仓库**的模板，落盘前须经用户批准。
 
 ---
 
@@ -19,20 +19,20 @@
 
 ## Stale Bot（过期管理）
 
-自动标记和关闭长期无活动的 Issue 和 PR。
+只清理“等用户补充信息却一直没回”的 Issue，不碰已确认的 Bug。原因见 [避坑指南 §4.1](github-oss-ops-pitfalls.md#41-stale-机器人误伤)。
 
-> **版本提示（2026-08 核实）**：actions/stale 最新主版本为 V11（内部迁移 ESM，输入输出行为不变），官方 README 示例仍写 `@v10`——生产建议先用 `@v10`，确认 V11 正式发布后再升。该 action 由 GitHub 官方 actions 组织维护，活跃。
+> **版本（2026-11-08 核对）**：`actions/stale` 最新为 v11.0.0（2026-07-28 发布，内部改为 ESM，输入不变），需要 runner v2.327.1+。
 
 ```yaml
-# .github/workflows/stale.yml
+# 目标仓库 .github/workflows/stale.yml
 name: Stale Issues
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天 UTC 0:00 运行
+    - cron: '0 0 * * *'  # 每天 UTC 0:00
 
 permissions:
-  actions: write          # 用于工作流状态缓存（有状态运行需要）
+  actions: write          # 保存跨次运行状态
   issues: write
   pull-requests: write
 
@@ -40,73 +40,71 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@1e223db275d687790206a7acac4d1a11bd6fe629 # v10
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
         with:
-          # Issue 配置
-          days-before-issue-stale: 30       # 30 天无活动标记 stale
-          days-before-issue-close: 14       # 标记后 14 天无活动关闭
+          # Issue：只处理等待补充信息的
+          any-of-issue-labels: 'status:needs-info'
+          days-before-issue-stale: 14
+          days-before-issue-close: 14
           stale-issue-label: 'status:stale'
           stale-issue-message: |
-            This issue has been automatically marked as stale because it has had no activity for 30 days.
-            If this is still relevant, please provide an update. Otherwise, it will be closed in 14 days.
+            This issue is waiting for more information and has had no activity for 14 days.
+            Please add the requested details. It will be closed in 14 days otherwise, and you can reopen it at any time.
           close-issue-message: |
-            This issue was closed due to inactivity. Feel free to reopen if the issue persists.
-          exempt-issue-labels: 'priority:P0,priority:P1,status:in-progress,status:blocked'
-          # 仅处理特定类型的 Issue（v10.1+ 支持，可选）
-          # only-issue-types: 'Bug,Enhancement'  # 需仓库已启用 Issue 类型功能
+            Closing for now because the requested information was not provided. Reply or reopen whenever you can share it.
+          close-issue-reason: 'not_planned'
+          exempt-issue-labels: 'type:security,status:confirmed,status:in-progress,priority:P0,priority:P1'
 
-          # PR 配置
+          # PR：只提醒，不自动关闭
           days-before-pr-stale: 30
-          days-before-pr-close: 14
+          days-before-pr-close: -1
           stale-pr-label: 'status:stale'
           stale-pr-message: |
-            This PR has been marked as stale. Please update if you're still working on it.
-          close-pr-message: |
-            This PR was closed due to inactivity. Feel free to reopen.
+            This PR has had no activity for 30 days. Please update it if you are still working on it.
           exempt-pr-labels: 'status:in-progress,status:blocked'
 
-          # 通用配置
-          operations-per-run: 30            # 每次最多处理 30 个，避免速率限制
-          remove-stale-when-updated: true   # 有新活动时移除 stale 标签
-          # sort-by: 'updated'              # 排序方式（v10+ 支持）：updated | created
+          operations-per-run: 30            # 每次最多处理 30 个，避免限流
+          remove-stale-when-updated: true
+          # sort-by: 'created'              # 可选 created（默认）| updated | comments
 ```
 
-> **版本说明**：`actions/stale@v10` 需要 runner v2.327.1+（Node.js 24）。v9+ 引入了有状态运行——如果因 `operations-per-run` 中断，下次会从中断处继续，全部处理完毕后重置状态。因此调度间隔不宜过短。
+> **说明**：v9 起支持跨次运行续跑：被 `operations-per-run` 截断后，下次从中断处继续，全部处理完再重置。所以调度不宜过密。`days-before-*-close: -1` 表示永不自动关闭。
 
 ### 参数调整建议
 
-| 场景 | days-before-stale | days-before-close | 说明 |
+针对 `status:needs-info` 的 Issue：
+
+| 场景 | days-before-issue-stale | days-before-issue-close | 说明 |
 |------|-------------------|-------------------|------|
-| 活跃项目 | 14 | 7 | 快速清理，保持 Issue 列表干净 |
-| 一般项目（推荐） | 30 | 14 | 平衡，给用户足够时间 |
-| 低频项目 | 60 | 30 | 宽松，避免误关 |
-| 问题类 Issue | 7 | 7 | 快速关闭已解答的问题 |
+| 活跃项目 | 7 | 7 | 维护者响应快，用户也该快 |
+| 一般项目（推荐） | 14 | 14 | 给用户足够时间 |
+| 低频项目 | 30 | 30 | 宽松，避免误关 |
+
+不建议对全部 Issue 开启自动关闭；确需清理老旧积压时，先人工过一遍。
 
 ---
 
 ## Issue Labeler（自动标签）
 
-根据 Issue 内容自动添加标签。使用 `github/issue-labeler` 或 `actions/labeler`。
+按 Issue 标题和正文里的关键词自动打类型标签，用 `github/issue-labeler`。
+
+> `actions/labeler` 是给 **PR 按改动文件路径**打标签的，不能按关键词给 Issue 打标签；两者默认都读 `.github/labeler.yml` 但格式不同，所以这里把配置放在 `.github/issue-labeler.yml`，避免冲突。
 
 ### 配置文件
 
 ```yaml
-# .github/labeler.yml（Issue Labeler 配置）
-# 根据 Issue 正文中的关键词自动添加标签
+# 目标仓库 .github/issue-labeler.yml
+# 正则匹配 Issue 标题与正文
 
-# Bug 相关
 type:bug:
   - '(bug|crash|error|错误|崩溃|不工作|无法|失败|异常|卡死)'
 
-# 功能请求
 type:enhancement:
   - '(feature|request|suggestion|建议|希望|能不能|新增|支持|功能请求)'
 
-# 使用问题
 type:question:
   - '(question|how to|怎么|如何|请问|求助|为什么)'
 
-# 文档
 type:documentation:
   - '(docs|documentation|readme|文档|typo|错别字|说明不清)'
 ```
@@ -114,7 +112,7 @@ type:documentation:
 ### GitHub Actions 工作流
 
 ```yaml
-# .github/workflows/labeler.yml
+# 目标仓库 .github/workflows/issue-labeler.yml
 name: Issue Labeler
 
 on:
@@ -128,15 +126,16 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: github/issue-labeler@c1b0f9f52a63158c4adc09425e858e87b32e9685 # v3.4
+      - uses: github/issue-labeler@ccca1e16fcb66762200e616fc29b57b940c1cb67 # v3.5
         with:
-          configuration-path: .github/labeler.yml
+          configuration-path: .github/issue-labeler.yml
+          include-title: 1
           enable-versioned-regex: 0
-          sync-labels: 1               # v3.0+ 默认不移除不匹配的标签，设为 1 启用同步
+          sync-labels: 0               # 不移除人工打的标签
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-> **注意**：`github/issue-labeler@v3.0` 引入了破坏性变更——默认不再移除不匹配正则的已有标签。如需自动同步（移除不匹配的标签），必须设置 `sync-labels: 1`。`on` 触发器建议同时包含 `opened` 和 `edited`，这样 Issue 编辑后也会重新匹配。
+> **注意**：v3.0 起默认不移除不匹配的已有标签。`sync-labels: 1` 会删掉人工分流时加的类型标签，除非完全交给机器人，否则保持 `0`。关键词匹配误判较多，结果仍需人工复核。
 
 ---
 
@@ -145,13 +144,13 @@ jobs:
 自动欢迎首次提交 Issue 或 PR 的贡献者。
 
 ```yaml
-# .github/workflows/welcome.yml
+# 目标仓库 .github/workflows/welcome.yml
 name: Welcome Contributors
 
 on:
   issues:
     types: [opened]
-  pull_request:
+  pull_request:              # 注意：来自 Fork 的 PR 只有只读 Token，欢迎评论会失败
     types: [opened]
 
 permissions:
@@ -162,7 +161,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3
+      - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
         with:
           issue_message: |
             ## Welcome! 👋
@@ -189,11 +188,12 @@ jobs:
             A maintainer will review your PR soon. Thanks for contributing!
 ```
 
-> **版本说明**：`actions/first-interaction@v3` 相比 v1 有以下破坏性变更：
-> - 参数名从 `issue-message`/`pr-message` 改为 `issue_message`/`pr_message`（下划线替代连字符）
-> - PR 触发器从 `pull_request_target` 改为 `pull_request`（更安全，避免 token 权限泄露风险）
-> - 不再需要 `repo-token` 参数，默认使用 `GITHUB_TOKEN`
-> - 需要 runner v2.327.1+（Node.js 24）
+> **版本说明（2026-11-08 核对）**：
+> - 参数名在 **v2.0.0** 起改为下划线：`issue_message`／`pr_message`／`repo_token`；
+> - `repo_token` 默认取 `github.token`，一般不用填；
+> - v3 的破坏性变更只有一条：需要 runner v2.327.1+（Node.js 24）。
+>
+> **Fork PR 的限制**：`pull_request` 触发时，Fork 来的 PR 拿到的是只读 `GITHUB_TOKEN`，无法评论，所以首次贡献者的 Fork PR 收不到欢迎语。不要为此改用 `pull_request_target` 并检出代码（见 [避坑指南 §2.1](github-oss-ops-pitfalls.md#21-pull_request_target--检出-pr-代码)）。只发评论、不检出代码的话，`pull_request_target` 是安全的，可以单独给 PR 欢迎建一个这样的工作流。
 
 ### 自定义欢迎信息要点
 
@@ -209,7 +209,7 @@ jobs:
 自动将新 Issue 或 PR 分配给维护者。
 
 ```yaml
-# .github/workflows/auto-assign.yml
+# 目标仓库 .github/workflows/auto-assign.yml
 name: Auto Assign
 
 on:
@@ -226,7 +226,7 @@ jobs:
   assign:
     runs-on: ubuntu-latest
     steps:
-      - uses: pozil/auto-assign-issue@af6beea6bdf1e8eb373f061c5bc168681fc6d011 # v4.0.1
+      - uses: pozil/auto-assign-issue@d6e511896e5f1d2408e74db74416647d8ff80c8c # v4.1.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: your-github-username   # 替换为你的 GitHub 用户名
@@ -238,7 +238,7 @@ jobs:
 如果有多个维护者，可以用轮询（round-robin）方式分配：
 
 ```yaml
-      - uses: pozil/auto-assign-issue@af6beea6bdf1e8eb373f061c5bc168681fc6d011 # v4.0.1
+      - uses: pozil/auto-assign-issue@d6e511896e5f1d2408e74db74416647d8ff80c8c # v4.1.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: user1, user2, user3
@@ -246,7 +246,7 @@ jobs:
           allowSelfAssign: true
 ```
 
-> **版本说明**：`pozil/auto-assign-issue@v4` 需要 runner v2.327.1+（Node.js 24）。v3+ 切换至 ES Module，v4 增加 Node 24 支持。PR 触发器建议使用 `pull_request` 而非 `pull_request_target`（安全考虑）。
+> **版本说明**：`pozil/auto-assign-issue` v4 运行在 Node.js 24，需要 runner v2.327.1+。与欢迎机器人一样，Fork PR 在 `pull_request` 下只有只读 Token，自动分配会失败；可只对 Issue 启用，PR 交给 CODEOWNERS 自动请求审查。
 
 ---
 
@@ -255,7 +255,7 @@ jobs:
 定期检查 Issue 列表健康度，生成报告。
 
 ```yaml
-# .github/workflows/issue-health.yml
+# 目标仓库 .github/workflows/issue-health.yml
 name: Issue Health Check
 
 on:
@@ -274,12 +274,14 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
+            // listForRepo 会把 PR 一起返回，需要过滤；paginate 取全部页
+            const all = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
               per_page: 100
             });
+            const issues = all.filter(i => !i.pull_request);
 
             const now = new Date();
             const needsTriage = issues.filter(i =>
@@ -311,7 +313,7 @@ jobs:
 自动检测依赖中的安全漏洞并创建 PR 修复。开源项目强烈建议启用。
 
 ```yaml
-# .github/dependabot.yml
+# 目标仓库 .github/dependabot.yml
 version: 2
 
 updates:
@@ -323,12 +325,10 @@ updates:
       day: "monday"
     open-pull-requests-limit: 10  # 同时最多 10 个 PR
     labels:
-      - "type:security"
       - "dependencies"
     commit-message:
       prefix: "deps"              # 提交信息前缀
-    reviewers:
-      - "your-github-username"    # 审查者
+    # 审查者改由 CODEOWNERS 决定：`reviewers` 选项已于 2025-08-08 移除
 
   # GitHub Actions 版本更新
   - package-ecosystem: "github-actions"
@@ -336,9 +336,10 @@ updates:
     schedule:
       interval: "weekly"
     labels:
-      - "type:security"
       - "dependencies"
 ```
+
+> 版本更新 PR 不一定是安全修复，所以不默认打 `type:security`。
 
 ### 支持的包生态系统
 
@@ -354,7 +355,7 @@ updates:
 | `docker` | `Dockerfile` |
 | `github-actions` | `.github/workflows/*.yml` |
 
-> **安全更新 vs 版本更新**：Dependabot 安全更新默认对所有公开仓库免费启用，无需配置。上方 YAML 配置的是版本更新（主动保持依赖最新）。安全更新会在检测到漏洞时自动创建 PR。
+> **安全更新 vs 版本更新**：上方 YAML 配置的是**版本更新**。**安全更新**不靠这个文件，需要在 `Settings` 的安全设置中依次开启依赖图（Dependency graph）、Dependabot alerts 和 Dependabot security updates，之后检测到漏洞时会自动开修复 PR。
 
 ---
 
@@ -363,7 +364,7 @@ updates:
 自动根据文件路径请求特定维护者审查 PR。与分支保护规则配合使用效果最佳。
 
 ```bash
-# .github/CODEOWNERS
+# 目标仓库 .github/CODEOWNERS
 # 格式：文件路径模式  @用户名 或 @组织/团队名
 
 # 默认所有者（兜底）
@@ -383,16 +384,13 @@ Cargo.toml                  @your-github-username
 .github/                    @your-github-username
 ```
 
-### 配合分支保护使用
+### 配合分支规则使用
 
-在仓库 Settings → Branches → Branch protection rules 中：
-1. 选择需要保护的分支（如 `main`）
-2. 勾选 **Require pull request reviews before merging**
-3. 勾选 **Require review from Code Owners**
+推荐用 Rulesets（`Settings → Rules → Rulesets`）给 `main` 建分支规则集，开启 **Require a pull request before merging**，再勾选 **Require review from Code Owners**。经典分支保护（`Settings → Branches`）里的同名选项效果相同。
 
 这样，当 PR 修改了 CODEOWNERS 中匹配的文件时，会自动请求对应维护者审查。
 
-> CODEOWNERS 文件也可放在仓库根目录，但 `.github/CODEOWNERS` 优先级更高。
+> CODEOWNERS 可放在 `.github/`、仓库根目录或 `docs/`，GitHub 按这个顺序查找，用第一个找到的。
 
 ---
 
@@ -414,14 +412,14 @@ Cargo.toml                  @your-github-username
 .github/
 ├── workflows/
 │   ├── stale.yml          # Stale Bot
-│   ├── labeler.yml        # Issue Labeler
+│   ├── issue-labeler.yml  # Issue Labeler
 │   ├── welcome.yml        # Welcome Bot
 │   ├── auto-assign.yml    # Auto-assign
 │   └── issue-health.yml   # 健康检查
-├── labeler.yml            # Labeler 规则配置
+├── issue-labeler.yml      # Issue Labeler 关键词规则
 ├── dependabot.yml         # Dependabot 配置
 ├── CODEOWNERS             # 代码所有者配置
-└── ISSUE_TEMPLATE/        # Issue 模板（oss-prep 已处理）
+└── ISSUE_TEMPLATE/        # Issue 模板（github-oss-prep 已处理）
 ```
 
 ### GitHub Token 权限

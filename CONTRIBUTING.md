@@ -15,7 +15,7 @@
 1. **Fork** 本仓库
 2. **创建分支**：`git checkout -b feature/你的功能名`
 3. **提交改动**：使用 Conventional Commits 格式（`feat:` / `fix:` / `docs:` 等）
-4. **运行验证**：`node scripts/validate-skill.mjs`
+4. **运行验证**：`python scripts/validate.py` 与 `python -m unittest discover tests`
 5. **推送分支**：`git push origin feature/你的功能名`
 6. **提交 Pull Request**：填写 PR 模板，说明改动内容和原因
 

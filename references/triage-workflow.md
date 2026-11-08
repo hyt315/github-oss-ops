@@ -1,6 +1,6 @@
 # Issue 分流工作流
 
-> 详细的 Issue 分类决策树、标签体系设计和优先级矩阵。SKILL.md Step 3 引用本文件。
+> 适用任务：Issue 分流。包含分类决策树、标签体系、优先级矩阵与 AI 幻觉 Issue 识别。
 
 ---
 
@@ -13,9 +13,12 @@
 - [边界情况处理](#边界情况处理)
 - [安全漏洞处理](#安全漏洞处理)
 - [垃圾 Issue 和滥用处理](#垃圾-issue-和滥用处理)
-- [从 Issue 转 Discussion 的场景](#从-issue-转-discussion-的场景)
+- [AI 幻觉与垃圾 Issue 识别](#ai-幻觉与垃圾-issue-识别)
+- [从 Issue 转 Discussion](#从-issue-转-discussion)
 - [Issue 模板优化](#issue-模板优化)
 - [批量分流操作](#批量分流操作)
+- [分流结果展示模板](#分流结果展示模板)
+- [仓库状态摘要模板](#仓库状态摘要模板)
 
 ---
 
@@ -181,7 +184,7 @@ done
 | Issue 是求助但不是 Bug | 引导到 GitHub Discussions（如果开启了） |
 | 首次贡献者的低质量 Issue | 温和引导，提供模板链接，不直接关闭 |
 | Issue 是垃圾内容/广告 | 直接关闭并标记 `resolution:invalid`，必要时举报用户 |
-| Issue 包含敏感信息（token/密码） | 提醒提交者立即删除并轮换凭据，删除评论中的敏感内容 |
+| Issue 包含敏感信息（token/密码） | 提醒提交者立即吊销并轮换凭据；编辑删除敏感内容，并删除含敏感内容的编辑历史修订 |
 | Issue 是重复提交（同一用户多次） | 引用原始 Issue，关闭重复项，标记 `resolution:duplicate` |
 | Issue 已在旧版本修复但用户未升级 | 说明已修复的版本号，引导升级 |
 
@@ -189,42 +192,13 @@ done
 
 ## 安全漏洞处理
 
-安全漏洞需要特殊处理流程，不能在公开 Issue 中讨论细节。
+安全报告不能在公开 Issue 里讨论细节。分流时只做三件事（写操作先经用户批准）：
 
-### 处理流程
+1. 标记 `type:security` 与 `priority:P0`；
+2. 起草一条**不复述细节**的公开回复，请报告者改用 Private vulnerability reporting（GitHub 没有私信；公开仓库的 Issue 也不能改为私密）；
+3. 若 Issue 里已有利用细节或凭据：编辑删除并删掉含细节的编辑历史修订，必要时由管理员删除 Issue。
 
-```
-收到安全相关 Issue
-    ↓
-立即标记 type:security + priority:P0
-    ↓
-删除 Issue 中可能包含的漏洞利用细节（如有）
-    ↓
-私信提交者，引导使用 Private Vulnerability Reporting
-    ↓
-关闭公开 Issue（或转为私密）
-    ↓
-在 Security Advisory 中记录和跟踪
-    ↓
-修复后发布安全公告 + CVE（如适用）
-```
-
-### Private Vulnerability Reporting
-
-GitHub 提供私密的漏洞报告通道，维护者应在仓库设置中启用：
-
-1. 进入仓库 Settings → Security → Code security
-2. 开启 **Private vulnerability reporting**
-3. 此后用户可通过仓库页面的 **Security** 标签页私密报告漏洞
-
-### 安全 Issue 回复要点
-
-- 不要在公开评论中确认或否认漏洞的存在
-- 引导提交者使用私密渠道
-- 感谢报告者的负责任披露
-- 说明预计的响应时间
-
-> 详细的回复模板见 `references/response-templates.md` 中的"安全漏洞回复"部分。
+之后的评估、修复、CVE 与公告流程见 [security-vulnerability-sop.md](security-vulnerability-sop.md)，回复模板见 [response-templates.md](response-templates.md) 的“安全漏洞回复”。
 
 ---
 
@@ -254,10 +228,7 @@ GitHub 提供私密的漏洞报告通道，维护者应在仓库设置中启用�
 
 ---
 
-
----
-
-## 2026 AI 幻觉与垃圾 Issue 识别治理
+## AI 幻觉与垃圾 Issue 识别
 
 随着 AI 编码助手普及，社区中出现了由 LLM 自动生成的大量低质或幻觉 Issue。维护者应按以下标准识别并快速处置：
 
@@ -269,11 +240,11 @@ GitHub 提供私密的漏洞报告通道，维护者应在仓库设置中启用�
 ### 2. 处置策略
 - **核实代码库**：用搜索工具快速检索提报的 API/文件是否存在；
 - **判定为 AI 幻觉/垃圾后**：使用礼貌模板快速关闭并打上 `resolution:invalid` 标签，避免展开长篇辩论；
-- **高频滥用防御**：若特定账号持续批量提交 AI 幻觉 Issue，在仓库设置中启用并发限制或实施短期屏蔽。
+- **高频滥用防御**：若特定账号持续批量提交，可开启 Interaction limits 临时限制新账号或非贡献者互动，必要时屏蔽该账号（见 [community-and-contributors.md](community-and-contributors.md)）。
 
 ---
 
-## 从 Issue 转入 GitHub Discussions 的标准化流程
+## 从 Issue 转 Discussion
 
 保持 Issue 队列为纯粹的“待开发/待修复工单”，将开放式探讨转移到 Discussions：
 
@@ -294,7 +265,7 @@ GitHub 提供私密的漏洞报告通道，维护者应在仓库设置中启用�
 | 投票/调查类 | 适合 Discussion 的 Polls |
 | 问答（已被解答） | 标记为已解答的 Q&A 更有价值 |
 
-转 Discussion 的操作：GitHub UI 上可以直接 Convert to Discussion，或通过 API（目前 REST API 不直接支持，需要 GraphQL）。
+转 Discussion 只能在网页上操作：Issue 右侧栏 `Convert to discussion`（需 Triage 及以上权限）。REST 和 GraphQL 都没有转换接口，按标签批量转换的功能已于 2025-05 下线；GraphQL 的 `createDiscussion` 只能新建副本，不会保留原 Issue 的评论。
 
 ---
 
@@ -367,7 +338,7 @@ contact_links:
     about: 使用问题请在 Discussions 中提问
 ```
 
-> **提示**：`oss-prep` 技能已处理基础模板创建。本节提供的是优化建议，可根据项目实际情况调整。
+> **提示**：`github-oss-prep` 技能已处理基础模板创建。本节提供的是优化建议，可根据项目实际情况调整。
 
 ---
 
@@ -382,7 +353,7 @@ contact_links:
 
 ---
 
-## 分流结果展示模板（SKILL.md 3.5 内嵌）
+## 分流结果展示模板
 
 ```text
 ### Issue #{number}: {title}
@@ -396,7 +367,7 @@ contact_links:
 
 ---
 
-## 仓库状态摘要模板（SKILL.md 2.2 内嵌）
+## 仓库状态摘要模板
 
 ```text
 ## 仓库状态概览 — {owner}/{repo}

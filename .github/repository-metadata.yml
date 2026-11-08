@@ -15,6 +15,7 @@ features:
   issues: true
   discussions: true
   private-vulnerability-reporting: true
+# 期望的仓库配置（需在 Settings 中手动应用；截至 2026-11-08 main 尚未配置规则集）
 ruleset:
   target: main
   require-pull-request: true
@@ -22,5 +23,5 @@ ruleset:
   block-force-push: true
   block-deletion: true
 release:
-  tag: v2.1.0
-  title: GitHub OSS Ops v2.1.0
+  tag: v2.2.0
+  title: GitHub OSS Ops v2.2.0

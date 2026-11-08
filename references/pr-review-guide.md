@@ -1,6 +1,6 @@
 # PR 审查指南
 
-> PR 审查的检查清单、常见问题和审查意见模板。SKILL.md Step 5 引用本文件。
+> 适用任务：审查 PR。包含检查清单、常见问题和审查意见模板；提交 Review 前须经用户批准。
 
 ---
 
@@ -13,6 +13,9 @@
 - [常见 PR 问题和处理](#常见-pr-问题和处理)
 - [审查意见模板](#审查意见模板)
 - [合并决策树](#合并决策树)
+- [Rulesets 与 Merge Queue](#rulesets-与-merge-queue)
+- [审查摘要输出格式](#审查摘要输出格式)
+- [低质 PR 与 AI 生成 PR](#低质-pr-与-ai-生成-pr)
 
 ---
 
@@ -49,7 +52,7 @@
 | 是否更新了文档 | 检查是否有 `README`、`docs/`、`*.md` 的改动 |
 | 贡献者身份 | 首次贡献者 / 活跃贡献者（通过 commit 历史判断） |
 | CI/CD 检查状态 | 通过 `pull_request_read`（method: `get_status`）获取检查状态（pending/success/failure） |
-| 可合并状态 | 检查 `mergeable` 和 `mergeable_state` 字段（clean/blocked/dirty/unknown） |
+| 可合并状态 | 检查 `mergeable` 和 `mergeable_state`：常见值 `clean`（可合并）、`blocked`（被规则拦住）、`behind`（落后目标分支）、`unstable`（非必需检查失败）、`dirty`（有冲突）、`draft`、`unknown`（尚在计算，稍后重查） |
 | 分支冲突 | 检查是否与目标分支有冲突（`mergeable_state` 为 `dirty` 时有冲突） |
 | CODEOWNERS 审查 | 检查是否已获得 CODEOWNERS 中定义的必要审查 |
 
@@ -217,9 +220,17 @@ CODEOWNERS 审查是否完成？
 
 ---
 
-## 审查意见模板（SKILL.md 5.2 内嵌示例）
+## Rulesets 与 Merge Queue
 
-供直接参考的输出格式：
+- **先看规则再下结论**：`gh api repos/<owner>/<repo>/rulesets` 与 `gh api repos/<owner>/<repo>/rules/branches/<branch>` 能看到目标分支实际生效的规则（必需检查、必需审查数、是否要求线性历史）。`mergeable_state` 为 `blocked` 时多半是这里的规则没满足。
+- **批准不等于合并**：开启 Merge Queue 后，PR 进入队列会基于最新主线重新跑必需检查，失败会被移出队列。可用 `gh pr merge <number> --auto` 让 PR 满足条件后自动入队或合并。
+- **合并方式**：以仓库允许的方式为准（`Settings → General → Pull Requests`）；规则要求线性历史时不能用 Merge commit。
+
+---
+
+## 审查摘要输出格式
+
+给维护者看的审查摘要（不是发到 PR 上的评论）：
 
 ```text
 ### PR #{number}: {title}
@@ -247,7 +258,7 @@ CODEOWNERS 审查是否完成？
 
 ---
 
-## 2026 刷 KPI 式低质 PR 与 AI Slop 防御
+## 低质 PR 与 AI 生成 PR
 
 ### 1. 识别特征
 - **纯排版/空格/拼写微调**：仅修改了一处空格或微不足道的代码注释，旨在刷取 GitHub 贡献绿点（Contribution farming）；

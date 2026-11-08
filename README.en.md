@@ -38,11 +38,11 @@ Launching an open-source project is only the first step — daily maintenance is
 
 | Workflow | Capabilities & Actions | Value & Guardrails |
 |---|---|---|
-| 📋 **Issue Triage & AI Defense** | Aggregates issues, classifies priority, **detects 2026 AI hallucination issues**, routes Q&A to Discussions | Automated reading; comments and closures require approval |
+| 📋 **Issue Triage & AI Defense** | Aggregates issues, classifies priority, **detects AI-hallucinated and spam issues**, routes Q&A to Discussions | Automated reading; comments and closures require approval |
 | 🔍 **PR Review & Slop Defense** | Analyzes diff scope, CI status, **filters low-effort PRs**, audits Rulesets and Merge Queue | Never impersonates human review; no unapproved review comments |
 | 🛡️ **GHSA Private Security SOP** | Receives PVR reports, creates Temporary Private Forks, requests official CVE IDs | Strictly forbids public vulnerability discussions |
 | 🚀 **SemVer Release & Broadcast** | Suggests SemVer numbers, generates grouped changelogs, **drafts multi-channel social posts (X/Reddit/Discord)** | Tags, releases, and binary assets require independent approval |
-| 🤝 **Community Moderation & Ladder** | 4-step de-escalation ladder (Hide/Lock/Block), **All Contributors 24-type acknowledgment** | Maintains a welcoming community and prevents burnout |
+| 🤝 **Community Moderation & Ladder** | 4-step de-escalation ladder (Hide/Lock/Block), **All Contributors acknowledgment** | Maintains a welcoming community and prevents burnout |
 | 💰 **Sponsorship & Sustainable Ops** | `.github/FUNDING.yml` config, sponsor tier design, and commercial enterprise support channels | Helps projects build financial and community sustainability |
 | 📊 **Repository Health & Metrics** | Calculates MTTR, MTTM, manages Stale Bot, and generates weekly operational digests | Distinguishes objective facts from recommendations |
 
@@ -51,32 +51,22 @@ Launching an open-source project is only the first step — daily maintenance is
 ## 📊 Complete Operational Workflow Pipeline
 
 ```
-[Input: User asks to scan repository / triage issues / review PRs / release]
-                                 │
-   [Step 1: Target Repo & Auth Probing] ─> Read references/github-access-guide.md
-                                 │
-   [Step 2: Repository Status Scan] ────> Aggregates open issues/PRs & recent activity
-                                 │
-   [Step 3: Issue Triage & Defense] ────> Read references/triage-workflow.md (AI Hallucinations + Discussions)
-                                 │
-   [Step 4: Structured Reply Drafting] ──> Read references/response-templates.md (Drafts -> Approval -> Send)
-                                 │
-   [Step 5: PR Review & Slop Filter] ───> Read references/pr-review-guide.md (Diff scope + Breaking changes)
-                                 │
-   [Step 6: Private Security Handling] ──> Read references/security-vulnerability-sop.md (PVR + Fork + CVE)
-                                 │
-   [Step 7: Release & Broadcasting] ────> Read references/release-workflow.md (SemVer + Social broadcast)
-                                 │
-   [Step 8: Community Moderation] ──────> Read references/community-and-contributors.md (De-escalation + All Contributors)
-                                 │
-   [Step 9: Automation & Reporting] ────> Read references/automation-templates.md & reporting.md
+[Request: scan repo / triage / review PR / handle vuln / release / report]
+                               │
+   [SKILL.md task router] ──> read only the 1-2 guides for that task
+                               │
+   [Read-only collection] ──> gh / REST / MCP, only what the task needs
+                               │
+   [Output] ────────────────> fact card + analysis + drafts
+                               │
+   [Pending writes list] ───> executed one by one after explicit approval
 ```
 
 ---
 
-## 🛡️ 2026 AI Slop Defense & GHSA Vulnerability SOP
+## 🛡️ AI Slop Defense & Private Vulnerability Handling
 
-### 1. 2026 AI Slop & Contribution Farming Defense Matrix
+### 1. AI Slop & Contribution Farming Defense
 
 ```
 [New Inbound Contribution]
@@ -92,18 +82,18 @@ Launching an open-source project is only the first step — daily maintenance is
                      └── No ───> Audit diff scope, CI status, breaking changes & test coverage
 ```
 
-### 2. GHSA 90-Day Coordinated Vulnerability Disclosure Flow
+### 2. Private Vulnerability Coordination Flow
 
 ```
 [Researcher Reports Vulnerability] ──> Via GitHub Private Vulnerability Reporting (PVR)
                                                    │
                   [Create Temporary Private Fork for Collaboration]
                                                    │
-                  [Request Official CVE ID via GitHub as CNA]
+                  [Request CVE on the advisory; GitHub reviews it as a CNA]
                                                    │
-                  [90-Day Coordinated Vulnerability Disclosure Window]
+                  [Agree a disclosure date with the reporter (90 days is a common cap)]
                                                    │
-                  [Publish Security Advisory + Release Patch ➔ Dependabot Alerts]
+                  [Release patch + publish advisory ➔ Dependabot alerts after GitHub review]
 ```
 
 ---
@@ -144,16 +134,12 @@ gh skill install hyt315/github-oss-ops github-oss-ops --agent claude-code --scop
 
 ### Option D: Run regression tests locally
 
-```powershell
-# Run structure validation
-node scripts/validate-skill.mjs
+```bash
+# Package self-check: structure, version sync, links, credential scan (read-only, stdlib only)
+python scripts/validate.py
+python scripts/validate.py --json
 
-# Run ops readiness validator & quick sampling
-python scripts/validate_ops.py --quick
-python scripts/validate_ops.py --json
-
-# Run regression selftest and AST syntax gates
-python scripts/selftest.py
+# Positive and negative tests for the validator
 python -m unittest discover tests
 ```
 
@@ -192,7 +178,7 @@ python -m unittest discover tests
 | 🛡️ [**Security Vulnerability SOP (`security-vulnerability-sop.md`)**](references/security-vulnerability-sop.md) | PVR, Temporary Private Forks, CVE requests, GHSA publication | When handling security advisories | 4 mins |
 | 🚀 [**Release Workflow (`release-workflow.md`)**](references/release-workflow.md) | SemVer rules, release notes templates, multi-channel social copy | When cutting new releases | 4 mins |
 | 🤝 [**Community & Contributors (`community-and-contributors.md`)**](references/community-and-contributors.md) | 4-step de-escalation, All Contributors recognition, Sponsors ops | When moderating or growing community | 4 mins |
-| ⚙️ [**Automation Templates (`automation-templates.md`)**](references/automation-templates.md) | Stale Bot, Release Drafter, Issue Labeler configurations | When setting up repository automation | 4 mins |
+| ⚙️ [**Automation Templates (`automation-templates.md`)**](references/automation-templates.md) | Stale, Issue Labeler, welcome bot, Dependabot and CODEOWNERS configs | When setting up repository automation | 4 mins |
 | 📊 [**Reporting Guide (`reporting.md`)**](references/reporting.md) | MTTR/MTTM metrics definitions and weekly report templates | When reviewing project health | 3 mins |
 | 🔑 [**GitHub Access Guide (`github-access-guide.md`)**](references/github-access-guide.md) | 5-level auth hierarchy and least-privilege configuration | When configuring access | 3 mins |
 
@@ -202,7 +188,7 @@ python -m unittest discover tests
 
 ```
 github-oss-ops/
-├── SKILL.md                          # Core skill definition, progressive dispatch & 9 operational steps
+├── SKILL.md                          # Core skill: rules, task router, common flow & fact card
 ├── README.md                         # Chinese documentation
 ├── README.en.md                      # English documentation
 ├── CHANGELOG.md                      # Version history
@@ -217,11 +203,9 @@ github-oss-ops/
 ├── assets/                           # Media assets and social previews
 ├── examples/                         # Real-world examples
 ├── tests/
-│   └── test_skill.py                 # Core specification & AST regression unit tests
+│   └── test_validate.py              # Positive & negative tests for the validator
 ├── scripts/
-│   ├── validate_ops.py               # Ops readiness & specification validator (--json / --quick)
-│   ├── validate-skill.mjs            # Validation script
-│   └── selftest.py                   # Automated regression test runner (AST syntax gates)
+│   └── validate.py                   # Package self-check (single entry point, stdlib only)
 └── references/                       # 10 In-depth operational guides
     ├── github-oss-ops-pitfalls.md    # Core maintainer pitfalls & deep-water vulnerability defense
     ├── triage-workflow.md            # Triage decision tree & AI hallucination defense
@@ -230,7 +214,7 @@ github-oss-ops/
     ├── security-vulnerability-sop.md # PVR, Temporary Private Forks & CVE requests
     ├── release-workflow.md           # SemVer releases & multi-channel social broadcasting
     ├── community-and-contributors.md # 4-step de-escalation & All Contributors recognition
-    ├── automation-templates.md       # Stale / Release Drafter / Labeler configs
+    ├── automation-templates.md       # Stale / Issue Labeler / Welcome / Dependabot configs
     ├── reporting.md                  # MTTR/MTTM metrics & weekly reporting
     └── github-access-guide.md        # 5-level auth hierarchy & least-privilege guide
 ```
@@ -256,10 +240,10 @@ A complete, production-ready toolchain for open-source maintainers and contribut
 
 - **Q: Why are all write operations approval-gated?**  
   A: Maintainer credibility is essential. Approval-gated design ensures AI only prepares analysis and drafts in the background, preventing automated mistakes or accidental closures.
-- **Q: How does this defend against 2026 AI-generated hallucination bug reports?**  
-  A: `triage-workflow.md` includes an AI hallucination checklist (fake APIs, unaligned stack traces) paired with polite deflection templates and concurrency limit guidelines.
+- **Q: How does this defend against AI-generated hallucinated bug reports?**  
+  A: `triage-workflow.md` includes an AI hallucination checklist (fake APIs, unaligned stack traces) paired with polite deflection templates and interaction-limit guidance.
 - **Q: Why must security vulnerabilities never be discussed in public issues?**  
-  A: Public disclosures expose unpatched users to zero-day risks. The skill guides maintainers through official Private Vulnerability Reporting (PVR) and Temporary Private Forks to safely patch vulnerabilities and assign CVEs.
+  A: Public disclosures expose unpatched users to zero-day risks. The skill guides maintainers through official Private Vulnerability Reporting (PVR) and Temporary Private Forks to patch vulnerabilities privately and request CVEs.
 
 ---
 

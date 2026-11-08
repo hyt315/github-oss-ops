@@ -1,6 +1,41 @@
 # Changelog
 
-本项目采用 [Conventional Commits](https://www.conventionalcommits.org/) 格式记录变更。
+格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
+
+## [2.2.0] - 2026-11-08
+
+### Changed
+
+- `SKILL.md` 由串行的 Step 1–9 改为“任务路由表”：每类请求只读对应的 1–2 份手册，并写明产出和需要批准的写操作。新增只读的仓库快照命令，事实卡标明“格式示例”，数值必须来自命令。
+- 校验脚本合并为一个：`scripts/validate.py` 取代 `validate_ops.py`、`selftest.py`、`validate-skill.mjs`；`tests/test_validate.py` 取代 `tests/test_skill.py`，补上版本漂移、孤儿手册、失效链接、凭据样式、写死步骤编号等负向测试。CI 改为 Python，不再依赖 Node。
+- 手册不再写死 “SKILL.md Step N”，改为“适用任务”说明，避免编号变动后失效。
+- `github-oss-ops-pitfalls.md` 删去与其他手册重复的段落，改为指向对应手册。
+- `reporting.md` 补上 MTTM 定义与取数命令，时长指标改用中位数并注明样本数。
+- Stale 模板只处理 `status:needs-info`，PR 只提醒不自动关闭，与避坑指南保持一致。
+- Issue Labeler 配置改名为 `.github/issue-labeler.yml`，避免与 `actions/labeler` 冲突；`sync-labels` 改为 0。
+
+### Fixed（对照 2026-11-08 的 GitHub Docs 与 Changelog 核对）
+
+- Interaction limits 三种选项与时长写错（应为 existing users／prior contributors／repository collaborators；时长含 6 个月）。
+- 删除不存在的“把 Issue 转成安全公告”和“Issue 改为私密”的说法；GitHub 没有私信功能。
+- Issue 转 Discussion：REST 与 GraphQL 都不支持，只能在网页操作。
+- Fork PR 工作流审批的设置名与选项名更新为当前名称。
+- Rulesets 的 Evaluate 模式仅 Enterprise 提供；组织级规则集需要 Team 或 Enterprise。
+- Artifact attestations 单独使用为 SLSA Build Level 2，不是 Level 3。
+- 默认 `GITHUB_TOKEN` 权限：新建个人仓库默认只读，组织仓库继承组织设置。
+- 私有漏洞报告：设置路径、`Security & quality` 标签页改名（2026-04-02）、`Start a temporary private fork` 按钮名、临时私有 Fork 无法运行 CI、`Request CVE` 是 72 小时内审核而非分配、发布公告后 Dependabot 告警需 GitHub 审核且非全覆盖。
+- 隐藏评论的原因选项补全，删除不存在的 `disruptive`；敏感内容需删除编辑历史修订。
+- All Contributors 类型数（官方现为 33 种）与 key 对应关系；删除写死的作者账号。
+- Dependabot：`reviewers` 选项已于 2025-08-08 移除；安全更新需手动开启，并非默认启用。
+- `actions/stale` v11 已于 2026-07-28 正式发布，模板升级到 v11.0.0；`github/issue-labeler` 升到 v3.5（Node 24）；`pozil/auto-assign-issue` 升到 v4.1.0；`actions/first-interaction` 版本说明更正。
+- 健康检查脚本过滤掉 PR 并分页读取全部 Issue。
+- 欢迎机器人与自动分配对 Fork PR 只有只读 Token 的限制已注明。
+- Conventional Commits：只有 `feat`／`fix`／破坏性变更有规定的版本段，`docs`／`refactor`／`perf` 不再默认算 PATCH。
+- Changelog 生成改用 `gh pr list` 与 `releases/generate-notes`（`git log --merges` 会漏掉 Squash／Rebase 合并）；Changelog 草稿统一为 Keep a Changelog 格式。
+- Go 模块 v2+ 需要 `/vN` 路径后缀；X 字数、Hacker News、V2EX 发帖规则补充说明。
+- PR 审查补上 Rulesets 与 Merge Queue 一节（入口文件此前声称有，手册里没有）；`mergeable_state` 取值补全。
+- CI 的 `actions/checkout` 升到 v7.0.1；Node 20 已停止维护，改用 Python 3.12。
+- CHANGELOG 中 1.2.0 条目标题损坏，已修复并补上 1.2.1。
 
 ## [2.1.0] - 2026-09-06
 
@@ -23,7 +58,11 @@
 - **社区治理与 All Contributors 致谢**：新增 `references/community-and-contributors.md`，覆盖冲突 4 级降温处置、24 种贡献类型致谢与 GitHub Sponsors 运营；
 - **门面与文档全面升级**：中英双语 README 达到 PREP 黄金规范标准。
 
-6-08-21
+## [1.2.1] - 2026-08-22
+
+- 在 SKILL.md 中补充参考手册的阅读时长说明（LK005），使 Release 下载内容与 main 一致。
+
+## [1.2.0] - 2026-08-21
 
 ### Added
 

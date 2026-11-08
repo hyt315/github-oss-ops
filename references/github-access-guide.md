@@ -1,6 +1,6 @@
 # GitHub access guide
 
-This guide defines how GitHub OSS Ops selects an access path without collecting credentials.
+Task scope: confirming the target repository and choosing an access path, before any private read or write. This guide defines how GitHub OSS Ops selects an access path without collecting credentials.
 
 ## 目录
 
@@ -94,6 +94,8 @@ curl --fail-with-body \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/OWNER/REPO
 ```
+
+`2022-11-28` is still supported until 2028-03-10; the latest version is `2026-03-10` (checked 2026-11-08). Requests without the header default to `2022-11-28`. Read the breaking-changes page before switching.
 
 Do not run commands that echo the variable. Do not embed credentials in the URL. Redact request headers from debugging logs.
 

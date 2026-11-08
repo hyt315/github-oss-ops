@@ -1,6 +1,6 @@
 # 版本管理与发布流程
 
-> PR 合并后的版本更新、GitHub Release 创建和 Changelog 生成指南。SKILL.md Step 6 引用本文件。
+> 适用任务：判断版本号、写 Changelog 与 Release Notes、起草发版宣传文案。Tag、Release 与对外发布各自单独确认。
 
 ---
 
@@ -13,6 +13,8 @@
 - [Conventional Commits 集成](#conventional-commits-集成)
 - [版本号同步检查](#版本号同步检查)
 - [常见问题](#常见问题)
+- [版本更新方案示例](#版本更新方案示例)
+- [发版宣传文案模板](#发版宣传文案模板)
 
 ---
 
@@ -142,6 +144,8 @@ git tag v1.2.3
 git push origin v1.2.3
 ```
 
+> **v2 及以上的大版本**：模块路径必须带 `/vN` 后缀（如 `module github.com/owner/repo/v2`，并同步改所有导入路径），否则 `v2.0.0` 标签不会被 Go 工具链当作该模块的版本。
+
 ### 通用（无版本文件）
 
 如果项目没有版本文件，仅通过 git tag 管理：
@@ -184,7 +188,7 @@ git push origin v1.2.3
 | **Fixed** | Bug 修复（`type:bug`） |
 | **Changed** | 行为变更（不一定是 breaking） |
 | **Deprecated** | 标记弃用（尚未删除） |
-| **Removed** | 删除功能（breaking change） |
+| **Removed** | 删除功能（按 SemVer，删除公开 API 属于破坏性变更，需升 MAJOR） |
 | **Security** | 安全修复（`type:security`） |
 
 ### 生成 Changelog 的数据来源
@@ -194,16 +198,19 @@ git push origin v1.2.3
 3. 提取 PR 标题作为 changelog 条目
 4. 附上 PR 编号和贡献者用户名
 
+优先用 GitHub 查已合并 PR（`git log --merges` 会漏掉 Squash 和 Rebase 合并）：
+
 ```bash
-# 获取两个 tag 之间合并的 PR
-git log v1.2.3..HEAD --merges --oneline
+# 上一个 tag 的日期之后合并到默认分支的 PR
+gh pr list --state merged --base main --search "merged:>=2026-06-01" \
+  --json number,title,labels,author,mergedAt --limit 200
 ```
 
-或通过 GitHub API：
+或让 GitHub 直接生成分类草稿（只读，不创建 Release）：
 
-```
-GET /repos/{owner}/{repo}/pulls?state=closed&sort=updated&direction=desc
-# 过滤 merged_at 在上一个 release 之后的 PR
+```bash
+gh api repos/{owner}/{repo}/releases/generate-notes \
+  -f tag_name=v1.3.0 -f previous_tag_name=v1.2.3
 ```
 
 ---
@@ -262,22 +269,21 @@ gh release create v1.3.0 --title "v1.3.0" --notes "### Added..." --target main
 
 如果项目使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范，可以自动从提交信息推导版本段：
 
-| 提交前缀 | semver 版本段 | 示例 |
+| 提交 | semver 版本段 | 示例 |
 |----------|--------------|------|
 | `feat:` | MINOR | `feat: add export feature` |
 | `fix:` | PATCH | `fix: login timeout` |
-| `docs:` | PATCH | `docs: update API reference` |
-| `refactor:` | PATCH | `refactor: simplify auth flow` |
-| `perf:` | PATCH | `perf: optimize query` |
-| `feat!:` 或 `BREAKING CHANGE:` | MAJOR | `feat!: redesign config format` |
+| 类型后加 `!`，或正文末尾有 `BREAKING CHANGE:` 脚注 | MAJOR | `feat!: redesign config format` |
+| 其他类型（`docs:`、`refactor:`、`perf:`、`chore:` 等） | 规范未规定，由项目自定 | 常见做法：单独出现时不发版，或并入下一个 PATCH |
 
 ### 自动推导流程
 
 1. 获取上一个 tag 之后的所有 commit
 2. 解析 commit message 前缀
-3. 如果存在 `BREAKING CHANGE` 或 `!:` → MAJOR
-4. 否则如果存在 `feat:` → MINOR
-5. 否则 → PATCH
+3. 如果有 `!` 或 `BREAKING CHANGE:` 脚注 → MAJOR（`0.x` 阶段按项目约定，通常升 MINOR）
+4. 否则如果有 `feat:` → MINOR
+5. 否则如果有 `fix:` → PATCH
+6. 只有其他类型 → 按项目约定，并向用户说明
 
 ---
 
@@ -321,7 +327,7 @@ gh release create v1.3.0 --title "v1.3.0" --notes "### Added..." --target main
 
 ---
 
-## 版本更新方案示例（SKILL.md 6.3 内嵌）
+## 版本更新方案示例
 
 ```text
 ### 版本更新建议
@@ -333,36 +339,26 @@ gh release create v1.3.0 --title "v1.3.0" --notes "### Added..." --target main
 - 建议新版本：v1.3.0（取最高版本段）
 - 版本文件：`package.json`
 
-### Changelog 草稿
+### Changelog 草稿（Keep a Changelog 格式）
 
-## v1.3.0 (2026-06-20)
+## [Unreleased]
 
-### Features
+## [1.3.0] - 2026-06-20
+
+### Added
 - 新增导出功能 (#45) by @contributor
 
-### Bug Fixes
+### Fixed
 - 修复登录超时问题 (#42) by @contributor
 ```
 
-## 版本号同步清单（SKILL.md 6.5 移入）
+## 发版宣传文案模板
 
-| # | 位置 | 具体内容 | 作用 |
-|---|------|----------|------|
-| 1 | 版本文件 | `package.json` / `pyproject.toml` / `Cargo.toml` 等 | 包管理器识别 |
-| 2 | README 徽章 | shields.io 版本徽章 | 项目首页展示 |
-| 3 | SKILL.md frontmatter | `version: x.y.z`（如果是 Skill 项目） | Agent 识别用 |
-| 4 | Git tag | `git tag -a vx.y.z` | GitHub Tags 页面 |
-| 5 | GitHub Release | 基于 tag 创建 | Releases 正式发布页 |
+发版完成后可起草以下文案。**对外发布属于公开写操作，必须由用户确认后由用户本人或经授权发出。**
 
-> tag 和 Release 是两回事：tag 只是指针，Release 是带说明的发布页面。两者都需要创建。
+### 1. X（Twitter）短帖模板
 
----
-
-## 发版后全渠道社交广播文案模板库 (Release Broadcasting)
-
-发版完成后，向多渠道开发者社区同步广播：
-
-### 1. Twitter / X 短推文模板 (280 字符)
+> 普通账号单帖上限 280 字符，链接按 23 字符计；Premium 账号可更长。
 ```text
 🚀 {project_name} {version} is officially released!
 
@@ -377,7 +373,9 @@ Special thanks to all our amazing contributors! 🙌
 #OpenSource #GitHub #{tag}
 ```
 
-### 2. Reddit / Hacker News 深度发布贴模板
+### 2. Reddit 发布帖模板
+
+> 发到 Hacker News 时标题用 `Show HN: {project_name} – {one_sentence_pitch}`，正文去掉称呼，简短说明做了什么、为什么做。各子版块对自我推广有不同规定，先看版规。
 ```text
 Title: {project_name} {version} released - {one_sentence_pitch}
 
@@ -399,7 +397,9 @@ Full Changelog: {release_url}
 Feedback and contributions are warmly welcome!
 ```
 
-### 3. V2EX / 掘金 / 微信公众号发布文案模板
+### 3. V2EX／掘金／微信公众号文案模板
+
+> V2EX 的项目推广只能发在“分享创造”节点。
 ```text
 标题：【开源发布】{project_name} {version} 正式发布：{核心卖点一句话}
 

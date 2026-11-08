@@ -1,6 +1,6 @@
 # 回复模板库
 
-> 各场景的 Issue/PR 回复草稿模板。SKILL.md Step 4 引用本文件。
+> 适用任务：起草 Issue／PR 回复。这里只产出草稿，发送前须经用户批准。
 > 所有模板均为草稿，维护者确认或修改后才发送。
 
 ---
@@ -17,6 +17,7 @@
 - [关闭说明](#关闭说明)
 - [PR 审查回复](#pr-审查回复)
 - [Dependabot PR 回复](#dependabot-pr-回复)
+- [其他场景](#其他场景)
 
 ---
 
@@ -194,10 +195,8 @@ If your situation is different, please add details and I'll re-evaluate.
 ```
 感谢你的报告。出于安全考虑，漏洞细节不应在公开 Issue 中讨论。
 
-请通过 GitHub 的 Private Vulnerability Reporting 重新提交：
-1. 前往本仓库的 **Security** 标签页
-2. 点击 **Report a vulnerability**
-3. 填写漏洞详情
+请通过 GitHub 的私有漏洞报告重新提交：{repo_url}/security/advisories/new
+（也可在仓库的 Security & quality → Advisories 页面点击 Report a vulnerability。）
 
 我会在收到私密报告后尽快处理。感谢你的负责任披露！
 
@@ -208,10 +207,8 @@ If your situation is different, please add details and I'll re-evaluate.
 ```
 Thank you for your report. For security reasons, vulnerability details should not be discussed in public issues.
 
-Please resubmit via GitHub's Private Vulnerability Reporting:
-1. Go to the **Security** tab of this repository
-2. Click **Report a vulnerability**
-3. Fill in the vulnerability details
+Please resubmit through GitHub private vulnerability reporting: {repo_url}/security/advisories/new
+(or open the Security & quality → Advisories page and click Report a vulnerability.)
 
 I'll review the private report as soon as possible. Thank you for responsible disclosure!
 
@@ -421,24 +418,21 @@ Dependabot 版本更新 PR。
 
 ---
 
-## 2026 专项场景回复模板
+## 其他场景
 
-### 1. 首次贡献者 (First-time Contributor) 热烈致谢
+### 首个 PR 合并后致谢
 ```markdown
-🎉 @{username} 感谢你为 {project_name} 提交的第一个 Pull Request！代码非常整洁，我们已经将其合并。欢迎在未来继续参与贡献！🙌
+🎉 @{username} 感谢你为 {project_name} 提交的第一个 Pull Request！已经合并。欢迎在未来继续参与贡献！🙌
 ```
 
-### 2. 礼貌拒绝 AI 生成的低质 / 刷绿点 PR
+### 礼貌拒绝低质或 AI 生成的 PR
 ```markdown
 感谢你的关注。本项目目前不接受仅包含微小空格调整、机械重命名或未经充分测试的自动化提交。我们鼓励关注标有 `good first issue` 或 `help wanted` 的实质性功能与 Bug 修复。感谢理解！
 ```
 
-### 3. 引导使用问题转入 GitHub Discussions
+### 引导使用问题转入 Discussions
 ```markdown
-你好！Issue 跟踪器主要用于跟踪确认的代码缺陷和待办功能。关于具体的使用咨询与配置探讨，建议移步至 [GitHub Discussions](https://github.com/owner/repo/discussions)，社区成员会在那里提供解答与交流。感谢配合！
+你好！Issue 跟踪器主要用于跟踪确认的代码缺陷和待办功能。关于具体的使用咨询与配置探讨，建议移步至 GitHub Discussions（{repo_url}/discussions），社区成员会在那里提供解答与交流。感谢配合！
 ```
 
-### 4. 发现疑似安全漏洞引导转入私有渠道
-```markdown
-⚠️ 感谢反馈。为了保护所有用户的安全，请勿在公开 Issue 中讨论潜在的安全敏感漏洞。请通过仓库顶部的 **Security → Report a vulnerability** 提交私有漏洞报告，或联系安全维护者邮箱。本 Issue 将暂时关闭以防敏感信息扩散。
-```
+> 安全漏洞的引导模板见上方“安全漏洞回复”。

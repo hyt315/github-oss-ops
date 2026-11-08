@@ -8,7 +8,7 @@
 
 - [一、社区冲突 4 级降温与处置阶梯](#一社区冲突-4-级降温与处置阶梯)
 - [二、去情绪化沟通与维护者应对文案](#二去情绪化沟通与维护者应对文案)
-- [三、All Contributors 24 种全景致谢规范](#三all-contributors-24-种全景致谢规范)
+- [三、All Contributors 致谢规范](#三all-contributors-致谢规范)
 - [四、贡献者成长与维护者晋升阶梯](#四贡献者成长与维护者晋升阶梯)
 - [五、GitHub Sponsors 赞助与商业可持续运营](#五github-sponsors-赞助与商业可持续运营)
 
@@ -21,7 +21,7 @@
 ```
 Level 1: 善意提醒与规则指引 ──> 针对轻微离题、粗鲁语气
     ↓
-Level 2: 隐藏非建设性评论 ────> 标记为 off-topic / spam / abuse / disruptive
+Level 2: 隐藏非建设性评论 ────> Hide 并选原因（Off-topic / Spam / Abuse 等）
     ↓
 Level 3: 锁定讨论 (Lock) ─────> 针对无休止情绪化争论或已解决但被刷屏的 Issue
     ↓
@@ -29,11 +29,10 @@ Level 4: 封禁与举报 (Block) ──> 针对持续人身攻击、恶意骚扰
 ```
 
 ### 1. 隐藏评论（Hide Comment）
-在评论右上角菜单选择 `Hide`，并选择官方原因：
-- `Off-topic`（偏离主题）；
-- `Spam`（垃圾广告）；
-- `Abuse`（滥用违规）；
-- `Duplicate`（重复内容）。
+在评论右上角 `...` 菜单选择 `Hide`，再选原因。GitHub 提供的原因：`Spam`、`Abuse`、`Off-topic`、`Outdated`、`Duplicate`、`Resolved`、`Low quality`（以页面实际选项为准）。
+
+- 隐藏 Issue／PR 评论需要仓库 **Write** 权限；Triage 只能隐藏 Discussions 里的评论。
+- 评论里含敏感信息（凭据、漏洞细节）时，仅编辑删掉不够：编辑历史对有读权限的人可见，还要在 `edited` 下拉里**删除那一版修订**。
 
 ### 2. 锁定讨论（Lock Conversation）
 在 Issue / PR 右侧边栏点击 `Lock conversation`，选择锁定原因：
@@ -43,8 +42,9 @@ Level 4: 封禁与举报 (Block) ──> 针对持续人身攻击、恶意骚扰
 - `Spam`（垃圾评论泛滥）。
 
 ### 3. 封禁用户（Block User）
-- 组织维护者可将恶意用户从 Organization 屏蔽（支持 1天/3天/7天/30天/永久）；
-- 严重违反平台规则的可直接通过 `Report content` 向 GitHub Trust & Safety 官方举报。
+- 个人仓库：在个人设置里屏蔽该用户；组织仓库：由组织 **Owner 或 Moderator** 在组织设置中屏蔽，可选永久或一段时间；
+- 突发刷屏先用 **Interaction limits**（仓库 Settings → Moderation options → Interaction limits）临时降温，详见 [避坑指南 §6](github-oss-ops-pitfalls.md#6-社区防刷与危机处置互动限制评论隐藏与治理降温)；
+- 严重违规用评论或主页上的 `Report content`／`Report abuse` 向 GitHub 举报。
 
 ---
 
@@ -56,24 +56,26 @@ Level 4: 封禁与举报 (Block) ──> 针对持续人身攻击、恶意骚扰
 > 感谢参与讨论。为了保持社区健康与建设性的交流氛围，请大家遵守我们的 Code of Conduct (CODE_OF_CONDUCT.md)，避免情绪化言论，聚焦于技术问题本身。
 
 ### 模板 2：锁定过热讨论
-> 本讨论已偏离技术主题且存在情绪化交流。为了维护健康的社区环境，我们已暂时锁定本 Issue。如果对具体技术实现有新的构想，欢迎在 [Discussions](https://github.com/hyt315/github-oss-ops/discussions) 中开启建设性探讨。
+> 本讨论已偏离技术主题且存在情绪化交流。为了维护健康的社区环境，我们已暂时锁定本 Issue。如果对具体技术实现有新的构想，欢迎在 Discussions（`https://github.com/<owner>/<repo>/discussions`） 中开启建设性探讨。
 
 ---
 
-## 三、All Contributors 24 种全景致谢规范
+## 三、All Contributors 致谢规范
 
-不仅致谢写代码的人，凡是对项目有贡献的人都应被记录：
+不只致谢写代码的人。下表是常用类型，完整列表与 key 以官方 [Emoji Key](https://allcontributors.org/emoji-key/) 为准（2026-11 核对时为 33 种）：
 
-| 贡献类型 | 标识 Emoji | 适用场景 |
+| 贡献类型（key） | Emoji | 适用场景 |
 |---|:---:|---|
-| **代码 (Code)** | 💻 | 提交了功能或修复代码 |
-| **文档 (Documentation)** | 📖 | 编写或改进了 README、Wiki、教程 |
-| **设计 (Design)** | 🎨 | 设计了 Logo、UI、插图、配色 |
-| **Bug 反馈 (Bug reports)** | 🐛 | 提交了详尽、高质量的 Bug 复现报告 |
-| **分流与问答 (Triage / Q&A)** | 🔍 / 💬 | 在 Issue / Discussions 帮助解答他人问题 |
-| **翻译与本地化 (Translation)** | 🌍 | 翻译了多语言文档与界面 |
-| **测试与 CI (Tests / Infra)** | ⚠️ / 🚇 | 编写单元测试、优化 GitHub Actions CI |
-| **赞助与资助 (Financial)** | 💵 | 通过 GitHub Sponsors 等渠道提供财务支持 |
+| 代码 `code` | 💻 | 提交了功能或修复代码 |
+| 文档 `doc` | 📖 | 编写或改进了 README、Wiki、教程 |
+| 设计 `design` | 🎨 | 设计了 Logo、UI、插图、配色 |
+| Bug 反馈 `bug` | 🐛 | 提交了详尽、高质量的 Bug 复现报告 |
+| 答疑 `question` | 💬 | 在 Issue／Discussions 帮助解答他人问题 |
+| 审查 PR `review` | 👀 | 审查他人的 PR |
+| 翻译 `translation` | 🌍 | 翻译了多语言文档与界面 |
+| 测试 `test` | ⚠️ | 编写测试 |
+| 基础设施 `infra` | 🚇 | 维护 CI、构建与托管 |
+| 资助 `financial` | 💵 | 通过 GitHub Sponsors 等渠道提供财务支持 |
 
 ---
 
@@ -88,7 +90,7 @@ Level 4: 封禁与举报 (Block) ──> 针对持续人身攻击、恶意骚扰
    - 贡献 3+ 个高质量 PR 的开发者；
    - 邀请加入项目的 GitHub Team 或 Discord / 微信维护者群。
 3. **Triage Member（分流协作员）**：
-   - 赋予仓库 `Triage` 权限（可打标签、分流 Issue、管理 Discussions，不可直接 Push）。
+   - 赋予仓库 `Triage` 权限：可打标签、指派、关闭／重开 Issue 与 PR，可移动、锁定 Discussions；不能 Push、不能批准或合并 PR，不能管理 Discussions 分类。
 4. **Core Collaborator（核心维护者）**：
    - 赋予仓库 `Write` 权限；
    - 参与版本决策、PR 审查与技术路线图规划。
@@ -99,7 +101,7 @@ Level 4: 封禁与举报 (Block) ──> 针对持续人身攻击、恶意骚扰
 
 ### 1. 配置 `.github/FUNDING.yml`
 ```yaml
-github: [hyt315]
+github: [your_github_username]
 patreon: your_patreon
 open_collective: your_project
 custom: ['https://afdian.com/a/your_name', 'https://buymeacoffee.com/your_name']
