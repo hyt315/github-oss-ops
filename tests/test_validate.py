@@ -82,6 +82,12 @@ class ValidateTest(unittest.TestCase):
         self.append("examples/README.md", "\n" + "gh" + "p_" + "A" * 36 + "\n")
         self.assertFailsWith("疑似凭据")
 
+    def test_readme_version_stale(self) -> None:
+        for name in ("README.md", "README.en.md"):
+            path = self.root / name
+            path.write_text(path.read_text(encoding="utf-8").replace("v2.2.0", "v2.1.0"), encoding="utf-8")
+        self.assertFailsWith("未写明当前版本")
+
     def test_python_syntax_error(self) -> None:
         (self.root / "scripts/broken.py").write_text("def f(:\n    pass\n", encoding="utf-8")
         self.assertFailsWith("语法错误")

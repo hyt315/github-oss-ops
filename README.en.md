@@ -34,6 +34,16 @@ Launching an open-source project is only the first step — daily maintenance is
 
 ---
 
+## 🆕 Latest release: v2.2.0 (2026-11-08)
+
+- **Lighter entry point**: `SKILL.md` is now a task router, so each request reads only the one or two guides it needs; adds read-only repository snapshot commands.
+- **One validator**: `scripts/validate.py` replaces three overlapping scripts; CI needs only the Python standard library.
+- **Fact-checked**: about 30 outdated or wrong statements fixed against GitHub Docs and the GitHub Changelog as of 2026-11-08 (interaction limits, private vulnerability reporting, Dependabot, action versions and more).
+
+Full notes in [CHANGELOG.md](CHANGELOG.md); downloads on [Releases](https://github.com/hyt315/github-oss-ops/releases/latest).
+
+---
+
 ## ✨ Key Features
 
 | Workflow | Capabilities & Actions | Value & Guardrails |

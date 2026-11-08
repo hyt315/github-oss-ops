@@ -11,7 +11,7 @@
   5. references/ 下每份手册都被 SKILL.md 引用（无孤儿）
   6. 所有 Markdown 本地链接可达
   7. references/ 不得写死 "SKILL.md Step N"（编号一改就失效）
-  8. README 安装路径齐全
+  8. README 安装路径齐全，中英文 README 写明当前版本
   9. 文本文件中无凭据样式字符串、无危险凭据指引
  10. 全部 Python 文件可被 ast 解析
 
@@ -196,6 +196,10 @@ def validate(root: pathlib.Path = ROOT) -> dict:
         readme = _read(readme_path)
         for fragment in README_FRAGMENTS:
             check(fragment in readme, f"README.md 缺少 {fragment}")
+    for name in ("README.md", "README.en.md"):
+        path = root / name
+        if path.is_file() and version:
+            check(f"v{version}" in _read(path), f"{name} 未写明当前版本 v{version}")
 
     return {
         "status": "PASS" if not errors else "FAIL",

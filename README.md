@@ -34,6 +34,16 @@
 
 ---
 
+## 🆕 最新版本：v2.2.0（2026-11-08）
+
+- **入口更轻**：`SKILL.md` 改为“任务路由表”，每类请求只读对应的 1–2 份手册；新增只读的仓库快照命令。
+- **校验合一**：`scripts/validate.py` 取代原来三个重叠脚本，CI 只依赖 Python 标准库。
+- **事实核对**：对照 2026-11-08 的 GitHub 官方文档与 Changelog，修正约 30 处过时或错误说法（Interaction limits、私有漏洞报告流程、Dependabot、Action 版本等）。
+
+完整变更见 [CHANGELOG.md](CHANGELOG.md)，下载见 [Releases](https://github.com/hyt315/github-oss-ops/releases/latest)。
+
+---
+
 ## ✨ 核心特性
 
 | 核心工作流 | 覆盖功能与操作 | 带来价值与默认边界 |

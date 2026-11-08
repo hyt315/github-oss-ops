@@ -36,6 +36,7 @@
 - PR 审查补上 Rulesets 与 Merge Queue 一节（入口文件此前声称有，手册里没有）；`mergeable_state` 取值补全。
 - CI 的 `actions/checkout` 升到 v7.0.1；Node 20 已停止维护，改用 Python 3.12。
 - CHANGELOG 中 1.2.0 条目标题损坏，已修复并补上 1.2.1。
+- README（中英文）新增“最新版本”一节；`validate.py` 检查 README 写明当前版本，避免版本信息滞后。
 
 ## [2.1.0] - 2026-09-06
 
