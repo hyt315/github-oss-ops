@@ -34,7 +34,14 @@
 
 ---
 
-## 🆕 最新版本：v2.2.0（2026-11-08）
+## 🆕 最新版本：v2.2.1（2026-11-12）
+
+补丁版本，修正实测发现的问题，不改变用法：
+- **统计不再被截断**：运营报告的计数改用搜索 API 的 `total_count`；此前 `gh issue list` 默认只返回 30 条，活跃仓库的周报数量会被静默少算。
+- **校验门禁补洞**：`validate.py` 新增锚点校验、README 英文版安装路径、“最新版本”标题的版本与日期、`manifest.json` 的 `updated_at`、元数据 Release 标题等检查；CI 同时在 Python 3.10 与 3.12 上跑。
+- **手册对齐**：公开 Issue 里的漏洞先删细节、修复前不打 `type:security`（与漏洞 SOP 一致）；标签脚本可重复执行；“仅文档更新”的版本段与 Conventional Commits 一节统一；示例改用手册里真实存在的 `priority:P1`。
+
+**v2.2.0（2026-11-08）要点**
 
 - **入口更轻**：`SKILL.md` 改为“任务路由表”，每类请求只读对应的 1–2 份手册；新增只读的仓库快照命令。
 - **校验合一**：`scripts/validate.py` 取代原来三个重叠脚本，CI 只依赖 Python 标准库。
@@ -145,7 +152,7 @@ gh skill install hyt315/github-oss-ops github-oss-ops --agent claude-code --scop
 ### 方式 D：本地运行回归自测
 
 ```bash
-# 技能包自检：结构、版本一致、链接、凭据扫描（只读，零依赖）
+# 技能包自检：结构、版本与日期一致、链接与锚点、凭据扫描（只读，零依赖）
 python scripts/validate.py
 python scripts/validate.py --json
 

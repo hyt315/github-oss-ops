@@ -6,12 +6,13 @@
 检查项：
   1. 必需文件在盘
   2. SKILL.md frontmatter（name / version / description）
-  3. 版本号四处一致：SKILL.md、manifest.json、CHANGELOG.md 最新条目、.github/repository-metadata.yml
+  3. 版本号与日期一致：SKILL.md、manifest.json（version 与 updated_at）、CHANGELOG.md 最新条目、
+     .github/repository-metadata.yml（release.tag 与 release.title）
   4. CHANGELOG 每个二级标题形如 `## [x.y.z] - YYYY-MM-DD`
   5. references/ 下每份手册都被 SKILL.md 引用（无孤儿）
-  6. 所有 Markdown 本地链接可达
+  6. 所有 Markdown 本地链接可达，指向 .md 的 `#锚点` 必须对应真实标题
   7. references/ 不得写死 "SKILL.md Step N"（编号一改就失效）
-  8. README 安装路径齐全，中英文 README 写明当前版本
+  8. 中英文 README 安装路径齐全，“最新版本”标题的版本号和日期与 CHANGELOG 最新条目一致
   9. 文本文件中无凭据样式字符串、无危险凭据指引
  10. 全部 Python 文件可被 ast 解析
 
@@ -76,7 +77,14 @@ UNSAFE_PATTERNS = (
 )
 
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
-CHANGELOG_HEADING_RE = re.compile(r"^## \[(\d+\.\d+\.\d+)\] - \d{4}-\d{2}-\d{2}\s*$")
+CHANGELOG_HEADING_RE = re.compile(r"^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})\s*$")
+HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*#*\s*$", re.M)
+FENCE_RE = re.compile(r"^```.*?^```", re.S | re.M)
+# “最新版本”标题：{version} 与 {date} 由 CHANGELOG 最新条目填入
+README_LATEST = {
+    "README.md": "## 🆕 最新版本：v{version}（{date}）",
+    "README.en.md": "## 🆕 Latest release: v{version} ({date})",
+}
 STEP_REF_RE = re.compile(r"SKILL\.md\s*Step\s*\d", re.I)
 
 
@@ -88,6 +96,20 @@ def _iter_files(root: pathlib.Path):
 
 def _read(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def _anchors(text: str) -> set[str]:
+    """按 GitHub 规则把 Markdown 标题转成锚点（小写、去标点、空格变连字符、重名加 -N）。"""
+    found: set[str] = set()
+    seen: dict[str, int] = {}
+    for raw in HEADING_RE.findall(FENCE_RE.sub("", text)):
+        title = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", raw)
+        title = re.sub(r"<[^>]+>", "", title).replace("`", "")
+        slug = re.sub(r"[^\w\- ]", "", title.strip().lower()).replace(" ", "-")
+        count = seen.get(slug, 0)
+        seen[slug] = count + 1
+        found.add(slug if count == 0 else f"{slug}-{count}")
+    return found
 
 
 def _frontmatter(text: str) -> dict[str, str]:
@@ -129,6 +151,7 @@ def validate(root: pathlib.Path = ROOT) -> dict:
     check(bool(re.fullmatch(r"\d+\.\d+\.\d+", version)), f"SKILL.md version 不是 x.y.z: {version!r}")
 
     # 3. 版本一致
+    manifest: dict = {}
     try:
         manifest = json.loads(_read(root / "manifest.json"))
         check(manifest.get("version") == version,
@@ -137,6 +160,7 @@ def validate(root: pathlib.Path = ROOT) -> dict:
     except (OSError, json.JSONDecodeError) as exc:
         check(False, f"manifest.json 无法解析: {exc}")
 
+    release_date = ""
     changelog_path = root / "CHANGELOG.md"
     if changelog_path.is_file():
         headings = [line for line in _read(changelog_path).splitlines() if line.startswith("## ")]
@@ -146,11 +170,19 @@ def validate(root: pathlib.Path = ROOT) -> dict:
         newest = CHANGELOG_HEADING_RE.match(headings[0]) if headings else None
         check(bool(newest) and newest.group(1) == version,
               f"CHANGELOG 最新条目应为 [{version}]")
+        if newest:
+            release_date = newest.group(2)
+            check(manifest.get("updated_at") == release_date,
+                  f"manifest.json updated_at {manifest.get('updated_at')!r} 与 CHANGELOG 最新条目日期 {release_date} 不一致")
 
     metadata_path = root / ".github/repository-metadata.yml"
     if metadata_path.is_file():
-        check(f"tag: v{version}" in _read(metadata_path),
+        metadata = _read(metadata_path)
+        ver = re.escape(version)
+        check(bool(re.search(rf"^\s*tag:\s*v{ver}\s*$", metadata, re.M)),
               f"repository-metadata.yml 的 release tag 应为 v{version}")
+        check(bool(re.search(rf"^\s*title:.*\bv{ver}\s*$", metadata, re.M)),
+              f"repository-metadata.yml 的 release title 应以 v{version} 结尾")
 
     # 5. 无孤儿手册
     cited = set(re.findall(r"references/([\w\-]+\.md)", skill))
@@ -166,11 +198,15 @@ def validate(root: pathlib.Path = ROOT) -> dict:
         # 6. 本地链接
         if path.suffix == ".md":
             for target in LINK_RE.findall(text):
-                if re.match(r"^(?:[a-z][a-z0-9+.-]*:|#)", target, re.I):
+                if re.match(r"^[a-z][a-z0-9+.-]*:", target, re.I):
                     continue
-                local = unquote(target.split("#", 1)[0])
+                local, _, fragment = target.partition("#")
+                dest = path.parent / unquote(local) if local else path
                 if local:
-                    check((path.parent / local).exists(), f"{rel}: 本地链接失效 {target}")
+                    check(dest.exists(), f"{rel}: 本地链接失效 {target}")
+                if fragment and dest.suffix == ".md" and dest.is_file():
+                    check(unquote(fragment).lower() in _anchors(_read(dest)),
+                          f"{rel}: 锚点不存在 {target}")
 
         # 7. 写死步骤编号
         if rel.startswith("references/"):
@@ -190,16 +226,17 @@ def validate(root: pathlib.Path = ROOT) -> dict:
             except SyntaxError as exc:
                 check(False, f"{rel}: 第 {exc.lineno} 行语法错误 {exc.msg}")
 
-    # 8. README 安装路径
-    readme_path = root / "README.md"
-    if readme_path.is_file():
-        readme = _read(readme_path)
-        for fragment in README_FRAGMENTS:
-            check(fragment in readme, f"README.md 缺少 {fragment}")
-    for name in ("README.md", "README.en.md"):
+    # 8. README 安装路径与“最新版本”标题
+    for name, latest in README_LATEST.items():
         path = root / name
-        if path.is_file() and version:
-            check(f"v{version}" in _read(path), f"{name} 未写明当前版本 v{version}")
+        if not path.is_file():
+            continue
+        readme = _read(path)
+        for fragment in README_FRAGMENTS:
+            check(fragment in readme, f"{name} 缺少 {fragment}")
+        if version:
+            expected = latest.format(version=version, date=release_date)
+            check(expected in readme.splitlines(), f"{name} 未写明当前版本，应有标题行：{expected}")
 
     return {
         "status": "PASS" if not errors else "FAIL",

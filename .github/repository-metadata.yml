@@ -19,9 +19,12 @@ features:
 ruleset:
   target: main
   require-pull-request: true
-  require-status-check: validate
+  # CI 改为 Python 矩阵后，检查名带版本后缀
+  require-status-checks:
+    - validate (3.10)
+    - validate (3.12)
   block-force-push: true
   block-deletion: true
 release:
-  tag: v2.2.0
-  title: GitHub OSS Ops v2.2.0
+  tag: v2.2.1
+  title: GitHub OSS Ops v2.2.1

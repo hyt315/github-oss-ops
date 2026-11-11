@@ -105,36 +105,39 @@
 ### 创建标签的 API
 
 ```bash
-# 批量创建标签
-for label in '{"name":"type:bug","color":"d73a4a","description":"Confirmed bug"}' \
-             '{"name":"type:enhancement","color":"a2eeef","description":"Feature request"}' \
-             '{"name":"type:question","color":"d876e3","description":"Usage question"}' \
-             '{"name":"type:documentation","color":"0075ca","description":"Documentation improvement"}' \
-             '{"name":"type:refactor","color":"e4e669","description":"Code refactoring"}' \
-             '{"name":"type:performance","color":"fbca04","description":"Performance related"}' \
-             '{"name":"type:security","color":"b60205","description":"Security issue"}' \
-             '{"name":"priority:P0","color":"b60205","description":"Critical issue"}' \
-             '{"name":"priority:P1","color":"d93f0b","description":"Important issue"}' \
-             '{"name":"priority:P2","color":"0e8a16","description":"Normal priority"}' \
-             '{"name":"priority:P3","color":"c5def5","description":"Low priority"}' \
-             '{"name":"status:needs-triage","color":"fbca04","description":"Needs triage"}' \
-             '{"name":"status:needs-info","color":"e4e669","description":"Needs more info"}' \
-             '{"name":"status:confirmed","color":"0e8a16","description":"Bug confirmed, reproducible"}' \
-             '{"name":"status:in-progress","color":"0052cc","description":"Work in progress"}' \
-             '{"name":"status:blocked","color":"d93f0b","description":"Blocked by another issue"}' \
-             '{"name":"status:stale","color":"cfd3d7","description":"Stale, no recent activity"}' \
-             '{"name":"resolution:duplicate","color":"cfd3d7","description":"Duplicate issue"}' \
-             '{"name":"resolution:wontfix","color":"cfd3d7","description":"Will not fix"}' \
-             '{"name":"resolution:no-response","color":"cfd3d7","description":"Closed due to no response"}' \
-             '{"name":"resolution:invalid","color":"cfd3d7","description":"Invalid issue"}' \
-             '{"name":"good first issue","color":"7057ff","description":"Good for newcomers"}' \
-             '{"name":"help wanted","color":"008672","description":"Contributions welcome"}'; do
-  curl --fail-with-body -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
-    -H "Accept: application/vnd.github+json" \
-    "https://api.github.com/repos/<owner>/<repo>/labels" \
-    -d "$label"
-done
+# 批量创建或更新标签。可重复执行：--force 会更新已存在的同名标签，
+# 新仓库自带的 good first issue / help wanted 不会因“已存在”而报错
+R=owner/repo
+while IFS='|' read -r name color desc; do
+  gh label create "$name" -R "$R" --color "$color" --description "$desc" --force
+done <<'LABELS'
+type:bug|d73a4a|Confirmed bug
+type:enhancement|a2eeef|Feature request
+type:question|d876e3|Usage question
+type:documentation|0075ca|Documentation improvement
+type:refactor|e4e669|Code refactoring
+type:performance|fbca04|Performance related
+type:security|b60205|Security issue
+priority:P0|b60205|Critical issue
+priority:P1|d93f0b|Important issue
+priority:P2|0e8a16|Normal priority
+priority:P3|c5def5|Low priority
+status:needs-triage|fbca04|Needs triage
+status:needs-info|e4e669|Needs more info
+status:confirmed|0e8a16|Bug confirmed, reproducible
+status:in-progress|0052cc|Work in progress
+status:blocked|d93f0b|Blocked by another issue
+status:stale|cfd3d7|Stale, no recent activity
+resolution:duplicate|cfd3d7|Duplicate issue
+resolution:wontfix|cfd3d7|Will not fix
+resolution:no-response|cfd3d7|Closed due to no response
+resolution:invalid|cfd3d7|Invalid issue
+good first issue|7057ff|Good for newcomers
+help wanted|008672|Contributions welcome
+LABELS
 ```
+
+> 没有 `gh` 时用 `POST /repos/{owner}/{repo}/labels`；同名标签已存在会返回 422，要改用 `PATCH /repos/{owner}/{repo}/labels/{name}` 更新。
 
 ---
 
@@ -192,11 +195,11 @@ done
 
 ## 安全漏洞处理
 
-安全报告不能在公开 Issue 里讨论细节。分流时只做三件事（写操作先经用户批准）：
+安全报告不能在公开 Issue 里讨论细节。分流时按 [security-vulnerability-sop.md §一](security-vulnerability-sop.md#一漏洞被发到公开-issue-时) 的顺序处理（每步写操作先经用户批准）：
 
-1. 标记 `type:security` 与 `priority:P0`；
+1. **先去掉细节**：Issue 里已有利用细节或凭据时，编辑删除并删掉含细节的编辑历史修订，必要时由管理员删除 Issue；
 2. 起草一条**不复述细节**的公开回复，请报告者改用 Private vulnerability reporting（GitHub 没有私信；公开仓库的 Issue 也不能改为私密）；
-3. 若 Issue 里已有利用细节或凭据：编辑删除并删掉含细节的编辑历史修订，必要时由管理员删除 Issue。
+3. 优先级在私有安全公告里跟踪。修复发布前不要给这条公开 Issue 打 `type:security`／`priority:P0`，标签会把未修复的漏洞指给所有人看；`type:security` 留给不含利用细节的安全加固类 Issue。
 
 之后的评估、修复、CVE 与公告流程见 [security-vulnerability-sop.md](security-vulnerability-sop.md)，回复模板见 [response-templates.md](response-templates.md) 的“安全漏洞回复”。
 

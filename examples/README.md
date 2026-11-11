@@ -15,13 +15,13 @@ These examples make the skill's output and approval boundaries inspectable befor
 ```text
 时间窗口：2026-07-11 至 2026-07-18
 Issue #42 — Windows 渲染失败
-分类：type:bug / priority:high
+分类：type:bug / priority:P1
 证据：包含可复现命令；CI 中 Windows job 同类失败
 可能重复：#37（相同错误码，仍需维护者确认）
 建议：请求系统版本和最小复现仓库
 草稿：感谢反馈。为了确认是否与 #37 相同，请补充……
 
-待批准写操作：添加 type:bug、priority:high；发送上述评论。
+待批准写操作：添加 type:bug、priority:P1；发送上述评论。
 ```
 
 只有用户确认具体 Issue、标签和评论内容后，才执行写操作。
