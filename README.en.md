@@ -34,7 +34,14 @@ Launching an open-source project is only the first step — daily maintenance is
 
 ---
 
-## 🆕 Latest release: v2.2.0 (2026-11-08)
+## 🆕 Latest release: v2.2.1 (2026-11-12)
+
+A patch release fixing problems found by measurement; usage is unchanged:
+- **Report counts are no longer truncated**: counts now come from the search API's `total_count`. `gh issue list` returns only 30 items by default, so weekly numbers for busy repositories were silently undercounted.
+- **Validator gaps closed**: `validate.py` now checks Markdown anchors, the install paths in the English README, the version and date in the "Latest release" heading, `manifest.json` `updated_at`, and the release title in the repository metadata; CI runs on Python 3.10 and 3.12.
+- **Guides realigned**: for a vulnerability posted in a public issue, remove the details first and do not add `type:security` before the fix ships (matching the security SOP); the label script can be re-run safely; "docs-only" versioning now matches the Conventional Commits section; the example uses the real `priority:P1` label.
+
+**v2.2.0 (2026-11-08) highlights**
 
 - **Lighter entry point**: `SKILL.md` is now a task router, so each request reads only the one or two guides it needs; adds read-only repository snapshot commands.
 - **One validator**: `scripts/validate.py` replaces three overlapping scripts; CI needs only the Python standard library.
@@ -145,7 +152,7 @@ gh skill install hyt315/github-oss-ops github-oss-ops --agent claude-code --scop
 ### Option D: Run regression tests locally
 
 ```bash
-# Package self-check: structure, version sync, links, credential scan (read-only, stdlib only)
+# Package self-check: structure, version and date sync, links and anchors, credential scan (read-only, stdlib only)
 python scripts/validate.py
 python scripts/validate.py --json
 

@@ -2,6 +2,24 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [2.2.1] - 2026-11-12
+
+### Fixed
+
+- 运营报告少算：`reporting.md` 的计数此前用 `gh issue list`／`gh pr list` 的条数，二者默认只返回 30 条。实测 `cli/cli` 在 2026-10 新建 Issue 178 个，按旧方法只会数出 30 个。计数改用 `search/issues` 的 `total_count`，需要逐条算时长时加 `--limit 1000` 并核对条数；`SKILL.md` 快照命令补充截断判断。
+- 公开 Issue 里的漏洞：`triage-workflow.md` 第一步是给公开 Issue 打 `type:security`／`priority:P0`，与 `security-vulnerability-sop.md`、避坑指南 §5 的“先删细节”顺序相反，标签还会把未修复的漏洞指给所有人看。改为先删细节、再引导私有报告、修复前不打安全标签，并直接链到 SOP。
+- 标签脚本不能重跑：`POST /labels` 遇到已存在的标签返回 422，新仓库自带的 `good first issue`／`help wanted` 每次都会失败。改为 `gh label create --force`，标签表改成一行一个，便于增删。
+- `release-workflow.md` 的“仅文档更新 → patch”与同页 Conventional Commits 一节（`docs:` 规范未规定版本段）矛盾，统一为“由项目自定”。
+- `examples/README.md` 用了标签体系里不存在的 `priority:high`，改为 `priority:P1`。
+- CHANGELOG 中 1.0.0／1.0.1／1.0.2 的日期都写成了 2026-07-18，按对应 Tag 与 Release 的实际日期改为 2026-06-21／2026-06-22／2026-07-17。
+
+### Changed
+
+- `scripts/validate.py` 补上此前放过的检查：Markdown `#锚点` 必须对应真实标题（含同文件锚点，此前以 `#` 开头的链接整个被跳过）；`README.en.md` 的安装路径；中英文 README“最新版本”标题的版本号与日期必须与 CHANGELOG 最新条目一致（此前只查字符串 `vX.Y.Z` 是否出现）；`manifest.json` 的 `updated_at`；`repository-metadata.yml` 的 Release 标题。每项都配了负向测试（11 → 18 个测试）。
+- `tests/test_validate.py` 不再写死版本号，发版时不必改测试。
+- CI 增加 Python 3.10（`SKILL.md` 声明的最低版本）与 3.12 的矩阵；检查名随之变为 `validate (3.10)`／`validate (3.12)`，`repository-metadata.yml` 里期望的必需检查同步更新。
+- 中英文 README 的“最新版本”一节换成 v2.2.1；v2.2.0 的三条要点保留在其下方。
+
 ## [2.2.0] - 2026-11-08
 
 ### Changed
@@ -99,14 +117,14 @@
 - Prohibited asking users to paste credentials into chat or persisting credentials in the skill directory.
 - Replaced public vulnerability reporting with GitHub Private Vulnerability Reporting.
 
-## [1.0.2] - 2026-07-18
+## [1.0.2] - 2026-07-17
 
 - Aligned MCP tool names with the then-current consolidated GitHub MCP tools.
 
-## [1.0.1] - 2026-07-18
+## [1.0.1] - 2026-06-22
 
 - Replaced non-functional HTML anchors with Markdown headings.
 
-## [1.0.0] - 2026-07-18
+## [1.0.0] - 2026-06-21
 
 - Initial public release.

@@ -1,6 +1,6 @@
 ---
 name: github-oss-ops
-version: 2.2.0
+version: 2.2.1
 description: Use when maintaining an open-source GitHub repository after launch - Issue triage, spotting AI-generated or spam Issues/PRs, drafting replies, PR review, CI diagnosis, private vulnerability reports (PVR, security advisories, CVE), version bumps and release notes, release announcements, community moderation, contributor recognition, sponsorship, stale-item cleanup, repository automation and health reports. All GitHub writes are approval-gated. Triggers include Issue 分流、triage、回复 Issue、PR 审查、发版、Release、changelog、漏洞响应、社区治理、致谢贡献者、stale、运营周报、开源项目运营、oss ops.
 ---
 
@@ -54,7 +54,7 @@ gh api repos/$R/actions/permissions/workflow              # 默认 GITHUB_TOKEN 
 gh release list -R $R --limit 3
 ```
 
-没有 `gh` 时用同名 REST 接口；某项因权限查不到就在事实卡里写“未查（需 X 权限）”。
+列表命令有条数上限（`gh` 默认 30，上面写了 `--limit`），返回条数等于上限时说明被截断：事实卡里的数量改用 `gh api -X GET search/issues -f q="repo:$R is:issue is:open" --jq .total_count`（PR 用 `is:pr`）。没有 `gh` 时用同名 REST 接口；某项因权限查不到就在事实卡里写“未查（需 X 权限）”。
 
 ## 事实卡格式
 
@@ -74,7 +74,7 @@ gh release list -R $R --limit 3
 ## 本技能包自检
 
 ```bash
-python scripts/validate.py          # 结构、版本一致、链接、凭据扫描
+python scripts/validate.py          # 结构、版本与日期一致、链接与锚点、凭据扫描
 python -m unittest discover tests   # 校验器的正向与负向测试
 ```
 

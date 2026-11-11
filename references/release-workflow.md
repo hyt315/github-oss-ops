@@ -42,7 +42,8 @@ PR 合并后，检查改动类型：
          │       如：新增函数、新增配置选项、新增命令
          │
          └── 否 → PATCH（x.y.z）
-                  如：修复 Bug、优化性能、更新文档
+                  如：修复 Bug、修复安全问题
+                  （仅文档／重构／性能优化：规范未规定，见下方 Conventional Commits）
 ```
 
 ### 特殊情况
@@ -51,7 +52,7 @@ PR 合并后，检查改动类型：
 |------|--------|------|
 | v0.x.x（初始开发阶段） | 任意段都可变 | v0 阶段 API 不稳定，MINOR 递增也可能有破坏性变更 |
 | 同时合并多个 PR | 取最高段 | 一个 patch + 一个 minor → minor |
-| 仅文档更新 | patch | 不改代码但用户需要知道有更新 |
+| 仅文档更新 | 由项目自定 | SemVer 与 Conventional Commits 都未规定；常见做法是不单独发版，或用户需要知道时发 patch |
 | 安全修复 | patch 或 minor | 取决于是否新增 API |
 | 依赖升级（Dependabot） | patch（通常） | 除非依赖有 breaking change |
 
