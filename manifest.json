@@ -1,10 +1,8 @@
 {
   "name": "github-oss-ops",
-  "version": "2.2.1",
-  "owner": "personal",
-  "updated_at": "2026-11-12",
-  "review_cadence": "per-release",
-  "status": "active",
-  "maturity_tier": "production",
-  "lifecycle_stage": "production"
+  "version": "2.3.0",
+  "owner": "hyt315",
+  "updated_at": "2026-11-20",
+  "license": "MIT",
+  "description": "Lightweight, approval-gated GitHub maintainer ops skill: Issue triage, AI slop & prompt-injection defense, PR review, PVR/GHSA vulnerability SOP, SemVer releases, and accurate health reporting."
 }
